@@ -1,6 +1,7 @@
 import BCrypt from "@/lib/bcrypt";
 import { signInSchema, signUpSchema } from "./schema";
 import { prisma } from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
 
 export type LoginCredentials = typeof signInSchema._type
 export type RegisterCredentials = typeof signUpSchema._type
@@ -8,10 +9,16 @@ export type RegisterCredentials = typeof signUpSchema._type
 // TODO: Needs testing
 export default class AuthService {
 
+    private _prisma: PrismaClient;
+
+    constructor(_prisma: PrismaClient = prisma) {
+        this._prisma = _prisma;
+    }
+
     async login(credentials: LoginCredentials) {
         const { email, password } = signInSchema.parse(credentials);
         
-        const user = prisma.user.findUnique({
+        const user = await this._prisma.user.findUnique({
             where: {
                 email,
             }
@@ -22,7 +29,8 @@ export default class AuthService {
             throw new Error("User not found");
         }
 
-        if (!BCrypt.compare(password, email)) {
+        console.log(user, password, user.password, BCrypt.compare(password, user.password!))
+        if (!BCrypt.compare(password, user.password!)) {
             // TODO: Implement custom errors
             throw new Error("Invalid credentials");
         }
@@ -32,7 +40,7 @@ export default class AuthService {
 
     async register(credentials: RegisterCredentials) {
         const { email, password, name } = signUpSchema.parse(credentials);
-        const userExists = await prisma.user.findUnique({
+        const userExists = await this._prisma.user.findUnique({
             where: {
                 email,
             }
@@ -43,10 +51,10 @@ export default class AuthService {
             throw new Error("User already exists");
         }
 
-        const user = await prisma.user.create({
+        const user = await this._prisma.user.create({
             data: {
                 email,
-                password: await BCrypt.hash(password),
+                password: BCrypt.hash(password),
                 name,
             }
         });

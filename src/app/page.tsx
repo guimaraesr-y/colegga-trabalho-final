@@ -11,11 +11,8 @@ import {
 import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import SignInForm from "@/components/sign-in";
-import SignUpForm from "@/components/sign-up";
 import AuthForm from "@/components/authform";
-import { register } from "@/actions/auth";
-import { signIn } from "@/auth";
+import { login, register } from "@/actions/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
 
 
@@ -42,16 +39,16 @@ export default function LoginPage() {
     }
   ];
   const fields = isLogin ? [
-    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
     { name: 'email', placeholder: 'Email', type: 'email' },
     { name: 'password', placeholder: 'Senha', type: 'password' },
   ] : [
+    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
     { name: 'email', placeholder: 'Email', type: 'email' },
     { name: 'password', placeholder: 'Senha', type: 'password' },
-  ]
+  ] 
   const buttonTitle = isLogin ? 'Entrar' : 'Registre-se'
 
-  const signFunction = isLogin ? signIn : register
+  const signFunction = isLogin ? login : register
 
   const signSchema = isLogin ? signInSchema : signUpSchema
 

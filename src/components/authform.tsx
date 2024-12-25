@@ -3,11 +3,8 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { signUpSchema } from "@/domain/auth/schema";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
-import { signIn } from "@/auth";
-import { register } from "@/actions/auth";
 import { ZodObject } from "zod";
 
 interface SignUpProps {
@@ -18,31 +15,21 @@ interface SignUpProps {
   signFunction: (credentials: any) => Promise<any>,
 }
 
-export default function AuthForm({setIsModalOpen, fields, buttonTitle, signFunction }: SignUpProps) {
+export default function AuthForm({setIsModalOpen, fields, buttonTitle, signSchema, signFunction }: SignUpProps) {
 
-  const onSuccess = (res: typeof signUpSchema['_output']) => {
+  const onSuccess = (res: typeof signSchema['_output']) => {
       toast.promise(
-        new Promise((resolve, reject) => {
-          register(res)
-            .then((res) => {
-              console.log(res);
-              resolve(res)
-            })
-            .catch((res) => {
-              console.error(res);
-              reject(res);
-            })
-        }),
+        () => signFunction(res),
         {
-          pending: 'Registrando...',
-          success: 'Registrado com sucesso!',
-          error: 'Ocorreu um erro ao registrar você!', 
+          pending: 'Aguarde...',
+          success: 'Sucesso!',
+          error: 'Ocorreu um erro!', 
         }
       )
       setIsModalOpen(false);
     }
   
-    const onError = (error: Partial<Record<keyof typeof signUpSchema['_output'], string>>) => {
+    const onError = (error: Partial<Record<keyof typeof signSchema['_output'], string>>) => {
       console.log(error);
     }
 
@@ -55,7 +42,7 @@ export default function AuthForm({setIsModalOpen, fields, buttonTitle, signFunct
       onSuccess,
       onError,
       data,
-      schema: signUpSchema
+      schema: signSchema
     })
   }
 
@@ -72,7 +59,7 @@ export default function AuthForm({setIsModalOpen, fields, buttonTitle, signFunct
         />
       ))}
 
-      <Button onClick={signFunction} className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6 rounded-xl font-semibold text-white">
+      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6 rounded-xl font-semibold text-white">
         {buttonTitle}
       </Button>
     </form>

@@ -6,26 +6,32 @@ import { Input } from "./ui/input";
 import { signUpSchema } from "@/domain/auth/schema";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
+import { signIn } from "@/auth";
 import { register } from "@/actions/auth";
+import { ZodObject } from "zod";
 
 interface SignUpProps {
   setIsModalOpen: (isOpen: boolean) => void;
+  fields: {name: string, label?:string, placeholder:string, type?:string}[]
+  buttonTitle: string,
+  signSchema: ZodObject<any>, 
+  signFunction: (credentials: any) => Promise<any>,
 }
 
-export default function SignUpForm({ setIsModalOpen }: SignUpProps) {
+export default function AuthForm({setIsModalOpen, fields, buttonTitle, signFunction }: SignUpProps) {
 
   const onSuccess = (res: typeof signUpSchema['_output']) => {
       toast.promise(
         new Promise((resolve, reject) => {
-          // register(res)
-          //   .then((res) => {
-          //     console.log(res);
-          //     resolve(res)
-          //   })
-          //   .catch((res) => {
-          //     console.error(res);
-          //     reject(res);
-          //   })
+          register(res)
+            .then((res) => {
+              console.log(res);
+              resolve(res)
+            })
+            .catch((res) => {
+              console.error(res);
+              reject(res);
+            })
         }),
         {
           pending: 'Registrando...',
@@ -39,12 +45,6 @@ export default function SignUpForm({ setIsModalOpen }: SignUpProps) {
     const onError = (error: Partial<Record<keyof typeof signUpSchema['_output'], string>>) => {
       console.log(error);
     }
-
-  const fields = [
-    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
-    { name: 'email', placeholder: 'Email', type: 'email' },
-    { name: 'password', placeholder: 'Senha', type: 'password' },
-  ]
 
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,8 +72,8 @@ export default function SignUpForm({ setIsModalOpen }: SignUpProps) {
         />
       ))}
 
-      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6 rounded-xl font-semibold text-white">
-        Criar Conta
+      <Button onClick={signFunction} className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6 rounded-xl font-semibold text-white">
+        {buttonTitle}
       </Button>
     </form>
   )

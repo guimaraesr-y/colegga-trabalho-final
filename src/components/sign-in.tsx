@@ -14,15 +14,15 @@ export default function SignInForm({ setIsModalOpen }: SignInProps) {
   const onSuccess = (res: typeof signInSchema['_output']) => {
     toast.promise(
       new Promise((resolve, reject) => {
-        signIn("credentials", res)
-          .then((res) => {
-            console.log(res);
-            resolve(res)
-          })
-          .catch((res) => {
-            console.error(res);
-            reject(res);
-          })
+      //   signIn("credentials", res)
+      //     .then((res) => {
+      //       console.log(res);
+      //       resolve(res)
+      //     })
+      //     .catch((res) => {
+      //       console.error(res);
+      //       reject(res);
+      //     })
       }),
       {
         pending: 'Logging in...',

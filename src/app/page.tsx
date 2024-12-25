@@ -13,6 +13,12 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import SignInForm from "@/components/sign-in";
 import SignUpForm from "@/components/sign-up";
+import AuthForm from "@/components/authform";
+import { register } from "@/actions/auth";
+import { signIn } from "@/auth";
+import { signUpSchema, signInSchema } from "@/domain/auth/schema";
+
+
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +41,22 @@ export default function LoginPage() {
       description: "Ferramentas e conteúdos premium para impulsionar seu aprendizado"
     }
   ];
+  const fields = isLogin ? [
+    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
+    { name: 'email', placeholder: 'Email', type: 'email' },
+    { name: 'password', placeholder: 'Senha', type: 'password' },
+  ] : [
+    { name: 'email', placeholder: 'Email', type: 'email' },
+    { name: 'password', placeholder: 'Senha', type: 'password' },
+  ]
+  const buttonTitle = isLogin ? 'Entrar' : 'Registre-se'
+
+  const signFunction = isLogin ? signIn : register
+
+  const signSchema = isLogin ? signInSchema : signUpSchema
+
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -106,11 +128,7 @@ export default function LoginPage() {
                 {isLogin ? "Bem-vindo de Volta!" : "Crie Sua Conta"}
               </DialogTitle>
             </DialogHeader>
-            {isLogin ? (
-              <SignInForm setIsModalOpen={setIsModalOpen} />
-            ) : (
-              <SignUpForm setIsModalOpen={setIsModalOpen} />
-            )}
+            <AuthForm setIsModalOpen={setIsModalOpen} fields={fields} buttonTitle={buttonTitle} signFunction={signFunction} signSchema={signSchema} />
             <p className="text-center mt-4">
               {isLogin ? (
                 <span>

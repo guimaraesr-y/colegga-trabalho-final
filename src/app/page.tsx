@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -12,21 +11,12 @@ import {
 import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import SignInForm from "@/components/sign-in";
+import SignUpForm from "@/components/sign-up";
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleAction = () => {
-    if (isLogin) {
-      console.log("Login", { email, password });
-    } else {
-      console.log("Register", { email, password });
-    }
-    setIsModalOpen(false);
-  };
 
   const features = [
     {
@@ -116,31 +106,11 @@ export default function LoginPage() {
                 {isLogin ? "Bem-vindo de Volta!" : "Crie Sua Conta"}
               </DialogTitle>
             </DialogHeader>
-            <form className="space-y-4">
-              <Input
-                type="email"
-                placeholder="Seu melhor email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 text-lg rounded-xl"
-              />
-              <Input
-                type="password"
-                placeholder="Sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 text-lg rounded-xl"
-              />
-              <Button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6 rounded-xl font-semibold text-white"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleAction();
-                }}
-              >
-                {isLogin ? "Entrar" : "Criar Conta"}
-              </Button>
-            </form>
+            {isLogin ? (
+              <SignInForm setIsModalOpen={setIsModalOpen} />
+            ) : (
+              <SignUpForm setIsModalOpen={setIsModalOpen} />
+            )}
             <p className="text-center mt-4">
               {isLogin ? (
                 <span>

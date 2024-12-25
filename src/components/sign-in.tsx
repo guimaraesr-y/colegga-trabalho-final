@@ -4,7 +4,7 @@ import { Input } from "./ui/input";
 import { signInSchema } from "@/domain/auth/schema";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
-import { signIn } from "@/auth";
+import { login } from "@/actions/auth";
 
 interface SignInProps {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -14,12 +14,12 @@ export default function SignInForm({ setIsModalOpen }: SignInProps) {
   const onSuccess = (res: typeof signInSchema['_output']) => {
     toast.promise(
       new Promise((resolve, reject) => {
-        signIn("credentials", res)
-          .then((res) => {
+        login(res)
+          .then((res: any) => {
             console.log(res);
             resolve(res)
           })
-          .catch((res) => {
+          .catch((res: any) => {
             console.error(res);
             reject(res);
           })

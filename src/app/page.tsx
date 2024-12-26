@@ -1,101 +1,157 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import AuthForm from "@/components/authform";
+import { login, register } from "@/actions/auth";
+import { signUpSchema, signInSchema } from "@/domain/auth/schema";
 
-export default function Home() {
+
+
+export default function LoginPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+
+  const features = [
+    {
+      icon: <BsBookHalf className="text-3xl text-blue-500" />,
+      title: "Organização Inteligente",
+      description: "Sistema intuitivo para gerenciar seus estudos de forma eficiente"
+    },
+    {
+      icon: <BsPeople className="text-3xl text-blue-500" />,
+      title: "Comunidade Ativa",
+      description: "Conecte-se com estudantes que compartilham seus objetivos"
+    },
+    {
+      icon: <BsRocket className="text-3xl text-blue-500" />,
+      title: "Recursos Exclusivos",
+      description: "Ferramentas e conteúdos premium para impulsionar seu aprendizado"
+    }
+  ];
+  const fields = isLogin ? [
+    { name: 'email', placeholder: 'Email', type: 'email' },
+    { name: 'password', placeholder: 'Senha', type: 'password' },
+  ] : [
+    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
+    { name: 'email', placeholder: 'Email', type: 'email' },
+    { name: 'password', placeholder: 'Senha', type: 'password' },
+  ] 
+  const buttonTitle = isLogin ? 'Entrar' : 'Registre-se'
+
+  const signFunction = isLogin ? login : register
+
+  const signSchema = isLogin ? signInSchema : signUpSchema
+
+
+
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Image src="/logo.png" alt="Logo" width={120} height={120} className="mx-auto mb-8" />
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              Sua Jornada Acadêmica<br />Começa Aqui
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Organize seus estudos, conecte-se com outros alunos e alcance seus objetivos acadêmicos.
+            </p>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Começar Gratuitamente
+            </Button>
+          </motion.div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Social Proof */}
+        <div className="text-center bg-white rounded-2xl p-8 shadow-lg mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Junte-se a Milhares de Estudantes</h2>
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="p-4">
+              <div className="text-3xl font-bold text-blue-600 mb-2">10k+</div>
+              <div className="text-gray-600">Usuários Ativos</div>
+            </div>
+            <div className="p-4">
+              <div className="text-3xl font-bold text-blue-600 mb-2">50k+</div>
+              <div className="text-gray-600">Materiais Compartilhados</div>
+            </div>
+            <div className="p-4">
+              <div className="text-3xl font-bold text-blue-600 mb-2">95%</div>
+              <div className="text-gray-600">Satisfação</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-center mb-4">
+                {isLogin ? "Bem-vindo de Volta!" : "Crie Sua Conta"}
+              </DialogTitle>
+            </DialogHeader>
+            <AuthForm setIsModalOpen={setIsModalOpen} fields={fields} buttonTitle={buttonTitle} signFunction={signFunction} signSchema={signSchema} />
+            <p className="text-center mt-4">
+              {isLogin ? (
+                <span>
+                  Novo por aqui?{" "}
+                  <button
+                    className="text-blue-600 hover:underline font-semibold"
+                    onClick={() => setIsLogin(false)}
+                  >
+                    Criar conta
+                  </button>
+                </span>
+              ) : (
+                <span>
+                  Já tem conta?{" "}
+                  <button
+                    className="text-blue-600 hover:underline font-semibold"
+                    onClick={() => setIsLogin(true)}
+                  >
+                    Fazer login
+                  </button>
+                </span>
+              )}
+            </p>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

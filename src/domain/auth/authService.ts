@@ -29,7 +29,6 @@ export default class AuthService {
       throw new Error("User not found");
     }
 
-    console.log(user, password, user.password, BCrypt.compare(password, user.password!))
     if (!BCrypt.compare(password, user.password!)) {
       // TODO: Implement custom errors
       throw new Error("Invalid credentials");

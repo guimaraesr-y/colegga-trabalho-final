@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
 import { ZodObject } from "zod";
+import { useRouter } from "next/navigation";
 
 interface SignUpProps {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -16,7 +17,7 @@ interface SignUpProps {
 }
 
 export default function AuthForm({setIsModalOpen, fields, buttonTitle, signSchema, signFunction }: SignUpProps) {
-
+  const router = useRouter();
   const onSuccess = (res: typeof signSchema['_output']) => {
       toast.promise(
         () => signFunction(res),
@@ -27,6 +28,7 @@ export default function AuthForm({setIsModalOpen, fields, buttonTitle, signSchem
         }
       )
       setIsModalOpen(false);
+      router.push("/dashboard")
     }
   
     const onError = (error: Partial<Record<keyof typeof signSchema['_output'], string>>) => {

@@ -14,13 +14,15 @@ import { motion } from "framer-motion";
 import AuthForm from "@/components/authform";
 import { login, register } from "@/actions/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
+import { useRouter } from "next/navigation";
+
 
 
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-
+  const router = useRouter();
   const features = [
     {
       icon: <BsBookHalf className="text-3xl text-blue-500" />,

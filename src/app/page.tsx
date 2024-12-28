@@ -11,14 +11,14 @@ import {
 import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import AuthForm from "@/components/authform";
+import AuthForm from "@/components/auth-form";
 import { login, register } from "@/actions/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  
+
   const features = [
     {
       icon: <BsBookHalf className="text-3xl text-blue-500" />,

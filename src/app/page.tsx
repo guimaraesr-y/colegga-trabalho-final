@@ -14,15 +14,11 @@ import { motion } from "framer-motion";
 import AuthForm from "@/components/authform";
 import { login, register } from "@/actions/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
-import { useRouter } from "next/navigation";
-
-
-
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const router = useRouter();
+  
   const features = [
     {
       icon: <BsBookHalf className="text-3xl text-blue-500" />,
@@ -40,6 +36,7 @@ export default function LoginPage() {
       description: "Ferramentas e conteúdos premium para impulsionar seu aprendizado"
     }
   ];
+
   const fields = isLogin ? [
     { name: 'email', placeholder: 'Email', type: 'email' },
     { name: 'password', placeholder: 'Senha', type: 'password' },
@@ -48,14 +45,10 @@ export default function LoginPage() {
     { name: 'email', placeholder: 'Email', type: 'email' },
     { name: 'password', placeholder: 'Senha', type: 'password' },
   ] 
+
   const buttonTitle = isLogin ? 'Entrar' : 'Registre-se'
-
   const signFunction = isLogin ? login : register
-
   const signSchema = isLogin ? signInSchema : signUpSchema
-
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">

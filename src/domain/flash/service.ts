@@ -52,4 +52,69 @@ export default class FlashService extends PageableBaseService {
     return updatedFlash;
   }
 
+  async likeFlash(id: string, userId: string) {
+    return this._prisma.$transaction(async (prisma) => {
+      const flash = await prisma.flash.findUnique({
+        where: { id },
+        include: { likes: true },
+      });
+  
+      if (!flash) {
+        throw new Error("Flash not found");
+      }
+  
+      if (flash.likes.some((like) => like.userId === userId)) {
+        throw new Error("You already liked this flash");
+      }
+  
+      const updatedFlash = await prisma.flash.update({
+        where: { id },
+        data: {
+          likesCount: { increment: 1 },
+          likes: {
+            create: { userId },
+          },
+        },
+      });
+  
+      return updatedFlash;
+    });
+  }
+  
+  async unlikeFlash(id: string, userId: string) {
+    return this._prisma.$transaction(async (prisma) => {
+      const flash = await prisma.flash.findUnique({
+        where: { id },
+        include: { likes: true },
+      });
+  
+      if (!flash) {
+        throw new Error("Flash not found");
+      }
+  
+      if (!flash.likes.some((like) => like.userId === userId)) {
+        throw new Error("You did not like this flash");
+      }
+  
+      const updatedFlash = await prisma.flash.update({
+        where: { id },
+        data: {
+          likesCount: { decrement: 1 },
+          likes: {
+            deleteMany: { userId },
+          },
+        },
+      });
+  
+      return updatedFlash;
+    });
+  }
+
+  public async verifyFlashOwner(id: string, userId: string) {
+    const flash = await this._prisma.flash.findUnique({ where: { id } });
+
+    if (!flash) throw new Error("Flash not found");
+    if (flash.authorId !== userId) throw new Error("You are not the owner of this flash");
+  }
+
 }

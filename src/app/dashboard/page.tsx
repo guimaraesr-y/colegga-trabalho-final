@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Import do useRouter
 import { Button } from "@/components/ui/button";
 import { BsCalendar, BsGraphUp, BsListTask } from "react-icons/bs";
 import Image from "next/image";
@@ -13,6 +14,7 @@ import SignOutButton from "@/components/signout-button";
 const localizer = momentLocalizer(moment);
 
 export default function DashboardPage() {
+  const router = useRouter(); // Instância do useRouter
   const [selectedTab, setSelectedTab] = useState("progresso");
   const [events, setEvents] = useState([
     { title: "Reunião com o grupo de estudos", start: new Date(2024, 11, 28, 14, 0), end: new Date(2024, 11, 28, 15, 0) },
@@ -120,20 +122,16 @@ export default function DashboardPage() {
             <Image src="/logo.png" alt="Logo" width={60} height={60} />
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           </div>
-          {/* <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg"
-          >
-            Logout
-          </Button> */}
-          <SignOutButton>Sair</SignOutButton>
+          <div className="flex items-center space-x-4">
+            <Button
+            onClick={() => router.push("/community")}
+            className="bg-black hover:bg-gray-800 text-white font-semibold px-6 py-6 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+            >
+              Comunidade
+            </Button>
+            <SignOutButton>Sair</SignOutButton>
+          </div>
         </div>
-
-        {/* User Info */}
-        {/* <div className="absolute top-4 right-4 bg-white p-4 rounded-lg shadow-md text-gray-700">
-          <h3 className="text-lg font-bold">Informações do Usuário</h3>
-          <p><strong>Nome:</strong> João Silva</p>
-          <p><strong>Email:</strong> joao.silva@example.com</p>
-        </div> */}
 
         {/* Tabs Navigation */}
         <div className="flex space-x-6 border-b border-gray-200 pb-2 mb-6">

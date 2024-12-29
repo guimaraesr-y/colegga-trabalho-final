@@ -19,8 +19,8 @@ export default function DashboardPage(): JSX.Element {
 
   const tabs: Tab[] = [
     { id: "overview", label: "Overview", icon: <BsGraphUp className="text-2xl" /> },
-    { id: "tarefas", label: "Tarefas Recentes", icon: <BsListTask className="text-2xl" /> },
-    { id: "calendario", label: "Calendário", icon: <BsCalendar className="text-2xl" /> },
+    { id: "tasks", label: "Metas", icon: <BsListTask className="text-2xl" /> },
+    { id: "calendar", label: "Calendário", icon: <BsCalendar className="text-2xl" /> },
   ];
 
   const handleAddTask = () => {
@@ -34,9 +34,9 @@ export default function DashboardPage(): JSX.Element {
     switch (selectedTab) {
       case "overview":
         return <Overview />;
-      case "tarefas":
+      case "tasks":
         return <TasksTab tasks={tasks} newTask={newTask} setNewTask={setNewTask} onAddTask={handleAddTask} />;
-      case "calendario":
+      case "calendar":
         return <CalendarTab />;
       default:
         return null;

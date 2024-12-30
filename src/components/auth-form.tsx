@@ -5,15 +5,16 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
-import { ZodObject } from "zod";
 import { useRouter } from "next/navigation";
 import { useAuthUser } from "@/providers/authProvider";
+import { signInSchema, signUpSchema } from "@/domain/auth/schema";
 
 interface SignUpProps {
   setIsModalOpen: (isOpen: boolean) => void;
   fields: { name: string, label?: string, placeholder: string, type?: string }[]
   buttonTitle: string,
-  signSchema: ZodObject<any>,
+  signSchema: typeof signInSchema | typeof signUpSchema, 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signFunction: (credentials: any) => Promise<any>,
 }
 

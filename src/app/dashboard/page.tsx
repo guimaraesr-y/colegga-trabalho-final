@@ -9,10 +9,20 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import SignOutButton from "@/components/signout-button";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const localizer = momentLocalizer(moment);
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/");
+    }
+  });
+
   const [selectedTab, setSelectedTab] = useState("progresso");
   const [events, setEvents] = useState([
     { title: "Reunião com o grupo de estudos", start: new Date(2024, 11, 28, 14, 0), end: new Date(2024, 11, 28, 15, 0) },

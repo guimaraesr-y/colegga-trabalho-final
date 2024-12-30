@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getUser } from "@/actions/auth";
 import { User } from "@/domain/auth/authService";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, UpdateSession, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 
 // Contexto para fornecer o usuário autenticado
@@ -11,7 +11,8 @@ const AuthUserContext = createContext<{
   user: User | null, 
   session: Session | null,
   status: "authenticated" | "loading" | "unauthenticated",
-  loading: boolean
+  loading: boolean,
+  update?: UpdateSession
 }>({
   user: null,
   session: null,
@@ -33,7 +34,7 @@ export const useAuthUser = () => {
  */
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
+    <SessionProvider>
       <AuthHandler>{children}</AuthHandler>
     </SessionProvider>
   );
@@ -45,9 +46,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 const AuthHandler = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
   useEffect(() => {
+    console.log("Status:", status);
+    console.log("Session:", session);
+
     const refetchUser = async () => {
       setLoading(true);
 
@@ -67,10 +71,10 @@ const AuthHandler = ({ children }: { children: React.ReactNode }) => {
     };
 
     refetchUser();
-  }, [status, session]);
+  }, [status, session, update]);
 
   return (
-    <AuthUserContext.Provider value={{ user, session, status, loading }}>
+    <AuthUserContext.Provider value={{ user, session, status, loading, update }}>
       {children}
     </AuthUserContext.Provider>
   );

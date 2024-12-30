@@ -13,11 +13,8 @@ export const register = (credentials: RegisterCredentials) => {
     return authService.register(credentials);
 }
 
-export const logout = () => {
-    return signOut({ 
-        redirectTo: "/", 
-        redirect: true 
-    });
+export const logout = async () => {
+    return signOut()
 }
 
 export const getUser = (id: string) => {

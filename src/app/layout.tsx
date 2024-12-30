@@ -28,12 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <AuthProvider>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
           {children}
-        </AuthProvider>
         <ToastContainer
           position="bottom-right"
           autoClose={5000}
@@ -45,8 +44,9 @@ export default function RootLayout({
           draggable
           pauseOnHover
           theme="light"
-        />
+          />
       </body>
+      </AuthProvider>
     </html>
   );
 }

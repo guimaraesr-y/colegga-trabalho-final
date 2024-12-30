@@ -19,3 +19,7 @@ export const logout = () => {
         redirect: true 
     });
 }
+
+export const getUser = (id: string) => {
+    return authService.getUser(id);
+}

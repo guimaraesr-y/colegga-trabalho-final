@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { BsCalendar, BsGraphUp, BsListTask } from "react-icons/bs";
 
-import Header from "@/components/dashboard/Header";
+import Header from "@/components/dashboard/header";
 import TabNavigation, { Tab } from "@/components/dashboard/tab-navigation";
 import CalendarTab from "@/components/dashboard/calendar-tab";
 import TasksTab from "@/components/dashboard/task-tab";

@@ -1,22 +1,15 @@
-import { jest } from "@jest/globals";
 import BCrypt from "@/lib/bcrypt";
 import AuthService from "@/domain/auth/authService";
-import { PrismaClient } from "@prisma/client";
 import { mockUserData } from "../../utils/authHelper";
+import mockPrisma from "@/__tests__/__mocks__/mockPrisma";
 
 jest.mock("@/lib/bcrypt.ts", () => ({
   compare: jest.fn() as jest.MockedFunction<typeof BCrypt.compare>,
   hash: jest.fn() as jest.MockedFunction<typeof BCrypt.hash>,
 }));
 
-const mockPrisma = {
-  user: {
-    findUnique: jest.fn(),
-    create: jest.fn(),
-  },
-} as unknown as jest.Mocked<PrismaClient>;
-
 describe("AuthService", () => {
+
   const authService = new AuthService(mockPrisma);
 
   beforeEach(() => {
@@ -25,7 +18,7 @@ describe("AuthService", () => {
 
   it("should return user if it exists", async () => {
     const data = mockUserData();
-    mockPrisma.user.findUnique.mockResolvedValue(data);
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(data);
 
     const user = await authService.getUser(data.id);
 
@@ -33,7 +26,7 @@ describe("AuthService", () => {
   });
 
   it("should throw an error if user is not found", async () => {
-    mockPrisma.user.findUnique.mockResolvedValue(null);
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
     expect(
       authService.login({ email: "test@example.com", password: "12345678" })
@@ -41,7 +34,7 @@ describe("AuthService", () => {
   });
 
   it("should throw an error if password is invalid", async () => {
-    mockPrisma.user.findUnique.mockResolvedValue(mockUserData());
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(mockUserData());
     (BCrypt.compare as jest.MockedFunction<typeof BCrypt.compare>).mockReturnValue(false);
 
     expect(
@@ -50,7 +43,7 @@ describe("AuthService", () => {
   });
 
   it("should return user if password is valid", async () => {
-    mockPrisma.user.findUnique.mockResolvedValue(mockUserData());
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(mockUserData());
     (BCrypt.compare as jest.MockedFunction<typeof BCrypt.compare>).mockReturnValue(true);
 
     const user = await authService.login({ email: "test@example.com", password: "12345678" });
@@ -62,8 +55,8 @@ describe("AuthService", () => {
     const data = mockUserData();
 
     // Mocks
-    mockPrisma.user.findUnique.mockResolvedValue(null);
-    mockPrisma.user.create.mockResolvedValue(data);
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(null);
+    (mockPrisma.user.create as jest.Mock).mockResolvedValue(data);
     (BCrypt.hash as jest.MockedFunction<typeof BCrypt.hash>).mockReturnValue(data.password);
 
     const user = await authService.register({
@@ -84,7 +77,7 @@ describe("AuthService", () => {
 
   it("should throw an error if user already exists", async () => {
     const data = mockUserData();
-    mockPrisma.user.findUnique.mockResolvedValue(data);
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(data);
 
     expect(
       authService.register({

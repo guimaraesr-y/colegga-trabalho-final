@@ -18,7 +18,7 @@ describe("AuthService", () => {
 
   it("should return user if it exists", async () => {
     const data = mockUserData();
-    mockPrisma.user.findUnique.mockResolvedValue(data);
+    (mockPrisma.user.findUnique as jest.Mock).mockResolvedValue(data);
 
     const user = await authService.getUser(data.id);
 

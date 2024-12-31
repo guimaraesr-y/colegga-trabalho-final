@@ -1,11 +1,21 @@
 import BCrypt from "@/lib/bcrypt";
 import { signInSchema, signUpSchema } from "./schema";
 import BaseService from "@/misc/baseService";
+import { User as PrismaUser } from "@prisma/client";
 
 export type LoginCredentials = typeof signInSchema._type
 export type RegisterCredentials = typeof signUpSchema._type
+export type User = PrismaUser
 
 export default class AuthService extends BaseService {
+
+  async getUser(userId: string) {
+    return this._prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  }
 
   async login(credentials: LoginCredentials) {
     const { email, password } = signInSchema.parse(credentials);

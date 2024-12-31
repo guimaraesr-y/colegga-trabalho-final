@@ -6,35 +6,42 @@ import { Input } from "./ui/input";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useAuthUser } from "@/providers/authProvider";
 import { signInSchema, signUpSchema } from "@/domain/auth/schema";
 
 interface SignUpProps {
   setIsModalOpen: (isOpen: boolean) => void;
-  fields: {name: string, label?:string, placeholder:string, type?:string}[]
+  fields: { name: string, label?: string, placeholder: string, type?: string }[]
   buttonTitle: string,
   signSchema: typeof signInSchema | typeof signUpSchema, 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signFunction: (credentials: any) => Promise<any>,
 }
 
-export default function AuthForm({setIsModalOpen, fields, buttonTitle, signSchema, signFunction }: SignUpProps) {
+export default function AuthForm({ setIsModalOpen, fields, buttonTitle, signSchema, signFunction }: SignUpProps) {
+  const { update } = useAuthUser();
   const router = useRouter();
+
   const onSuccess = (res: typeof signSchema['_output']) => {
-      toast.promise(
-        () => signFunction(res),
-        {
-          pending: 'Aguarde...',
-          success: 'Sucesso!',
-          error: 'Ocorreu um erro!', 
-        }
-      )
+    toast.promise(
+      () => signFunction(res),
+      {
+        pending: 'Aguarde...',
+        success: 'Sucesso!',
+        error: 'Ocorreu um erro!',
+      }
+    ).then(() => {
+      update!();
       setIsModalOpen(false);
-      router.push("/dashboard")
-    }
-  
-    const onError = (error: Partial<Record<keyof typeof signSchema['_output'], string>>) => {
-      console.log(error);
-    }
+      router.push("/dashboard");
+    }).catch(err => {
+      toast.error(err);
+    });
+  }
+
+  const onError = (error: Partial<Record<keyof typeof signSchema['_output'], string>>) => {
+    console.log(error);
+  }
 
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();

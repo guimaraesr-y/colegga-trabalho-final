@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,10 +14,21 @@ import { motion } from "framer-motion";
 import AuthForm from "@/components/auth-form";
 import { login, register } from "@/actions/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
+import { useAuthUser } from "@/providers/authProvider";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const router = useRouter();
+
+  const { status } = useAuthUser();
+
+  useEffect(() => {
+    if(status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [router, status])
 
   const features = [
     {

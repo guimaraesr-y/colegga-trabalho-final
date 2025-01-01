@@ -11,8 +11,18 @@ import TasksTab from "@/components/dashboard/task-tab";
 import Overview from "@/components/dashboard/overview";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage(): JSX.Element {
+  const router = useRouter();
+  const { } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/");
+    }
+  });
+
   const [selectedTab, setSelectedTab] = useState<string>("overview")
   const [tasks, setTasks] = useState<string[]>(["Estudar capítulo 5", "Revisar notas de aula", "Participar do fórum de discussão"]);
   const [newTask, setNewTask] = useState<string>("");

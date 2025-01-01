@@ -2,6 +2,9 @@ import BCrypt from "@/lib/bcrypt";
 import { signInSchema, signUpSchema } from "./schema";
 import BaseService from "@/misc/baseService";
 import { User as PrismaUser } from "@prisma/client";
+import { UserAlreadyExists } from "./errors/userAlreadyExists";
+import { InvalidCredentialsError } from "./errors/invalidCredentialsError";
+import { UserNotFound } from "./errors/userNotFound";
 
 export type LoginCredentials = typeof signInSchema._type
 export type RegisterCredentials = typeof signUpSchema._type
@@ -27,13 +30,11 @@ export default class AuthService extends BaseService {
     })
 
     if (!user) {
-      // TODO: Implement custom errors
-      throw new Error("User not found");
+      throw new UserNotFound();
     }
 
     if (!BCrypt.compare(password, user.password!)) {
-      // TODO: Implement custom errors
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentialsError();
     }
 
     return user;
@@ -48,8 +49,7 @@ export default class AuthService extends BaseService {
     })
 
     if (userExists) {
-      // TODO: Implement custom errors
-      throw new Error("User already exists");
+      throw new UserAlreadyExists();
     }
 
     const user = await this._prisma.user.create({

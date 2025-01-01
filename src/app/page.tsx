@@ -12,7 +12,7 @@ import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import AuthForm from "@/components/auth-form";
-import { login, register } from "@/actions/auth";
+import { useAuth } from "@/hooks/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
 import { useAuthUser } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
 
+  const { login, register } = useAuth();
   const { status } = useAuthUser();
 
   useEffect(() => {

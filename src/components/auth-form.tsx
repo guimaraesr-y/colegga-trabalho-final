@@ -6,7 +6,6 @@ import { Input } from "./ui/input";
 import { handleZodValidation } from "@/lib/zodValidation";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useAuthUser } from "@/providers/authProvider";
 import { signInSchema, signUpSchema } from "@/domain/auth/schema";
 
 interface SignUpProps {
@@ -19,7 +18,6 @@ interface SignUpProps {
 }
 
 export default function AuthForm({ setIsModalOpen, fields, buttonTitle, signSchema, signFunction }: SignUpProps) {
-  const { update } = useAuthUser();
   const router = useRouter();
 
   const onSuccess = (res: typeof signSchema['_output']) => {
@@ -31,16 +29,17 @@ export default function AuthForm({ setIsModalOpen, fields, buttonTitle, signSche
         error: 'Ocorreu um erro!',
       }
     ).then(() => {
-      update!();
       setIsModalOpen(false);
       router.push("/dashboard");
-    }).catch(err => {
+    }).catch((err) => {
       toast.error(err);
     });
   }
 
   const onError = (error: Partial<Record<keyof typeof signSchema['_output'], string>>) => {
-    console.log(error);
+    Object.entries(error).forEach(([, value]) => {
+      toast.error(value);
+    });
   }
 
   const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {

@@ -49,9 +49,6 @@ const AuthHandler = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status, update } = useSession();
 
   useEffect(() => {
-    console.log("Status:", status);
-    console.log("Session:", session);
-
     const refetchUser = async () => {
       setLoading(true);
 

@@ -21,10 +21,14 @@ model User {
 
   notifications UserNotification[]
 
+  flashes      Flash[]            @relation("flashes")
+  likedFlashes UserLikedFlashes[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+// Notifications
 model Notification {
   id       String    @id @default(cuid())
   title    String
@@ -59,4 +63,37 @@ model UserNotification {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Flashes
+model Flash {
+  id        String  @id @default(cuid())
+  title     String?
+  content   String?
+  isComment Boolean @default(false)
+
+  related Flash[] @relation("FlashComments")
+  refId   String?
+  ref     Flash?  @relation("FlashComments", fields: [refId], references: [id])
+
+  authorId String
+  author   User   @relation("flashes", fields: [authorId], references: [id])
+
+  likes      UserLikedFlashes[]
+  likesCount Int                @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId, refId])
+}
+
+model UserLikedFlashes {
+  flashId   String
+  flash     Flash    @relation(fields: [flashId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([flashId, userId])
 }

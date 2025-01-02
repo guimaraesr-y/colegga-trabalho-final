@@ -36,7 +36,7 @@ export default class PageableService<T> {
 
   }
 
-  async getPageable(options: Options) {
+  async getPageable(options: Options): Promise<Pageable<T>> {
     const {
       page = this.defaultOptions.page,
       size = this.defaultOptions.size,
@@ -57,9 +57,9 @@ export default class PageableService<T> {
     return {
       data,
       total,
-      page,
-      size,
-    } as Pageable<T>;
+      page: page!,
+      size: size!,
+    };
   }
 
 }

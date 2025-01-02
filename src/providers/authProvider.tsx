@@ -55,7 +55,6 @@ const AuthHandler = ({ children }: { children: React.ReactNode }) => {
       if (status === "authenticated" && session?.user) {
         try {
           const fetchedUser = await getUserByEmail(session.user.email!);
-          console.log(fetchedUser)
           setUser(fetchedUser);
         } catch (error) {
           console.error("Failed to fetch user:", error);

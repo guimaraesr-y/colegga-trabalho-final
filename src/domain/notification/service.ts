@@ -1,16 +1,14 @@
-import { prisma } from "@/lib/prisma";
-import { PrismaClient, Notification as PrismaNotification } from "@prisma/client";
+import { PageableBaseService } from "@/misc/baseService";
+import { PageableOptions } from "@/misc/pageable";
+import { Prisma, Notification as PrismaNotification } from "@prisma/client";
 
 export type Notification = PrismaNotification;
+export type FlashPageableOptions = PageableOptions<Prisma.NotificationWhereInput, Prisma.NotificationOrderByWithRelationInput>;
 
 // TODO: Needs testing
-export default class NotificationService {
-
-  private _prisma: PrismaClient;
-
-  constructor(_prisma: PrismaClient = prisma) {
-    this._prisma = _prisma;
-  }
+export default class NotificationService extends PageableBaseService {
+  
+  protected model = this._prisma.notification;
 
   async getNotification(notificationId: string) {
     return this._prisma.notification.findUnique({
@@ -20,19 +18,9 @@ export default class NotificationService {
     });
   }
 
-  async getNotificationsForUser(userId: string) { // TODO: This should use the paginator to allow frontend filter unread, deleted, etc
-    return this._prisma.userNotification.findMany({
-      where: {
-        userId,
-        deleted: false,
-        notification: {
-          isActive: true
-        }
-      },
-      include: {
-        notification: true,
-      },
-    });
+  async getNotifications(userId: string, options: FlashPageableOptions) {
+    const pageableService = this.getPageableService();
+    return await pageableService.getPageable(options);
   }
 
   async createNotification(data: Omit<Notification, "id" | "createdAt" | "updatedAt">) {

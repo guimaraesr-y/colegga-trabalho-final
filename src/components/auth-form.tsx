@@ -26,7 +26,6 @@ export default function AuthForm({ setIsModalOpen, fields, buttonTitle, signSche
       {
         pending: 'Aguarde...',
         success: 'Sucesso!',
-        error: 'Ocorreu um erro!',
       }
     ).then(() => {
       setIsModalOpen(false);

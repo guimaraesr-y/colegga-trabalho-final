@@ -60,7 +60,7 @@ export default class AuthService extends BaseService {
       throw new UserAlreadyExists();
     }
 
-    const user = await this._prisma.user.create({
+    await this._prisma.user.create({
       data: {
         email,
         password: BCrypt.hash(password),
@@ -68,7 +68,9 @@ export default class AuthService extends BaseService {
       }
     });
 
-    return user;
+    const loggedInUser = await this.login({ email, password });
+
+    return loggedInUser;
   }
 
 }

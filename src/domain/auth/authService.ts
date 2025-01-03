@@ -17,6 +17,14 @@ export default class AuthService extends BaseService {
     });
   }
 
+  async getUserByEmail(email: string) {
+    return this._prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
   async login(credentials: LoginCredentials) {
     const { email, password } = signInSchema.parse(credentials);
 

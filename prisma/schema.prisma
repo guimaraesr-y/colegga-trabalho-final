@@ -19,6 +19,8 @@ model User {
   email    String? @unique
   password String?
 
+  notifications UserNotification[]
+
   flashes      Flash[]            @relation("flashes")
   likedFlashes UserLikedFlashes[]
 
@@ -26,6 +28,44 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+// Notifications
+model Notification {
+  id       String    @id @default(cuid())
+  title    String
+  message  String
+  sendDate DateTime?
+  
+  isActive Boolean   @default(true)
+  isSent   Boolean   @default(false)
+
+  targets UserNotification[]
+
+  model String?
+
+  template           String? @default("default")
+  customEmailMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserNotification {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+
+  read    Boolean @default(false)
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Flashes
 model Flash {
   id        String  @id @default(cuid())
   title     String?

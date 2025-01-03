@@ -1,7 +1,8 @@
 import { PageableBaseService } from "@/misc/baseService";
 import { PageableOptions } from "@/misc/pageable";
-import { Prisma } from "@prisma/client";
+import { Prisma, Flash as PrismaFlash } from "@prisma/client";
 
+export type Flash = PrismaFlash;
 export type FlashPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prisma.FlashOrderByWithRelationInput>;
 
 export default class FlashService extends PageableBaseService {
@@ -19,7 +20,7 @@ export default class FlashService extends PageableBaseService {
   }
 
   async getFlashes(options: FlashPageableOptions) {
-    const pageableService = this.getPageableService();
+    const pageableService = this.getPageableService<Flash>();
     return await pageableService.getPageable(options);
   }
 

@@ -1,3 +1,5 @@
+"use server";
+
 import { auth } from "@/auth";
 import FlashService, { FlashPageableOptions } from "@/domain/flash/service";
 import { Prisma } from "@prisma/client";
@@ -10,7 +12,7 @@ export const getFlash = async (id: string) => {
 
 export const getFlashes = async (options: FlashPageableOptions) => {
   const session = await auth()
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (!session?.user) throw new Error("Unauthorized");
 
   return await flashService.getFlashes(options);
 };

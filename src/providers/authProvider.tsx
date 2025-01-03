@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { getUser } from "@/actions/auth";
+import { getUserByEmail } from "@/actions/auth";
 import { User } from "@/domain/auth/authService";
 import { SessionProvider, UpdateSession, useSession } from "next-auth/react";
 import { Session } from "next-auth";
@@ -52,9 +52,9 @@ const AuthHandler = ({ children }: { children: React.ReactNode }) => {
     const refetchUser = async () => {
       setLoading(true);
 
-      if (status === "authenticated" && session?.user?.id) {
+      if (status === "authenticated" && session?.user) {
         try {
-          const fetchedUser = await getUser(session.user.id);
+          const fetchedUser = await getUserByEmail(session.user.email!);
           setUser(fetchedUser);
         } catch (error) {
           console.error("Failed to fetch user:", error);

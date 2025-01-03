@@ -20,3 +20,7 @@ export const logout = async () => {
 export const getUser = (id: string) => {
     return authService.getUser(id);
 }
+
+export const getUserByEmail = (email: string) => {
+    return authService.getUserByEmail(email);
+}

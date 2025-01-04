@@ -3,6 +3,7 @@ import { PageableOptions } from "@/misc/pageable";
 import { Prisma, Notification as PrismaNotification } from "@prisma/client";
 
 export type Notification = PrismaNotification;
+export type CreateNotification = Prisma.NotificationCreateInput;
 export type FlashPageableOptions = PageableOptions<Prisma.NotificationWhereInput, Prisma.NotificationOrderByWithRelationInput>;
 
 // TODO: Needs testing
@@ -23,7 +24,7 @@ export default class NotificationService extends PageableBaseService {
     return await pageableService.getPageable(options);
   }
 
-  async createNotification(data: Omit<Notification, "id" | "createdAt" | "updatedAt">) {
+  async createNotification(data: CreateNotification) {
     return this._prisma.notification.create({
       data,
     });

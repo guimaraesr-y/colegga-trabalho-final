@@ -1,6 +1,8 @@
+import EmailService from "@/lib/emailService";
 import { PageableBaseService } from "@/misc/baseService";
 import { PageableOptions } from "@/misc/pageable";
-import { Prisma, Flash as PrismaFlash } from "@prisma/client";
+import { Prisma, PrismaClient, Flash as PrismaFlash } from "@prisma/client";
+import NotificationService from "../notification/service";
 
 export type Flash = PrismaFlash;
 export type FlashPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prisma.FlashOrderByWithRelationInput>;
@@ -8,6 +10,15 @@ export type FlashPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prism
 export default class FlashService extends PageableBaseService {
 
   model = this._prisma.flash;
+  
+  private emailService;
+  private notificationService;
+
+  constructor(prisma?: PrismaClient, emailService = new EmailService(), notificationService = new NotificationService()) {
+    super(prisma);
+    this.emailService = emailService;
+    this.notificationService = notificationService;
+  }
 
   async getFlash(id: string) {
     const flash = await this._prisma.flash.findUnique({
@@ -77,6 +88,18 @@ export default class FlashService extends PageableBaseService {
           },
         },
       });
+
+      this.emailService.sendNotification(
+        await this.notificationService.createNotification({
+          title: flash.title || '(Flash sem título)',
+          message: "Um flash que você publicou acabou de ser curtido!",
+          template: "liked-flash",
+          model: "flash",
+          targets: {
+            connect: { id: flash.authorId },
+          }
+        })
+      );
   
       return updatedFlash;
     });

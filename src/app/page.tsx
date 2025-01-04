@@ -12,7 +12,7 @@ import { BsBookHalf, BsPeople, BsRocket } from "react-icons/bs";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import AuthForm from "@/components/auth-form";
-import { login, register } from "@/actions/auth";
+import { useAuth } from "@/hooks/auth";
 import { signUpSchema, signInSchema } from "@/domain/auth/schema";
 import { useAuthUser } from "@/providers/authProvider";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
 
+  const { login, register } = useAuth();
   const { status } = useAuthUser();
 
   useEffect(() => {
@@ -48,18 +49,14 @@ export default function LoginPage() {
     }
   ];
 
-  const fields = isLogin ? [
-    { name: 'email', placeholder: 'Email', type: 'email' },
-    { name: 'password', placeholder: 'Senha', type: 'password' },
-  ] : [
-    { name: 'name', label: 'Full Name', placeholder: 'Seu nome completo' },
-    { name: 'email', placeholder: 'Email', type: 'email' },
-    { name: 'password', placeholder: 'Senha', type: 'password' },
-  ] 
+  const commonFields = [
+    { name: "email", placeholder: "Email", type: "email" },
+    { name: "password", placeholder: "Senha", type: "password" },
+  ];
 
-  const buttonTitle = isLogin ? 'Entrar' : 'Registre-se'
-  const signFunction = isLogin ? login : register
-  const signSchema = isLogin ? signInSchema : signUpSchema
+  const fields = isLogin
+    ? commonFields
+    : [{ name: "name", label: "Full Name", placeholder: "Seu nome completo" }, ...commonFields];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -131,7 +128,13 @@ export default function LoginPage() {
                 {isLogin ? "Bem-vindo de Volta!" : "Crie Sua Conta"}
               </DialogTitle>
             </DialogHeader>
-            <AuthForm setIsModalOpen={setIsModalOpen} fields={fields} buttonTitle={buttonTitle} signFunction={signFunction} signSchema={signSchema} />
+            <AuthForm
+              setIsModalOpen={setIsModalOpen}
+              fields={fields}
+              buttonTitle={isLogin ? 'Entrar' : 'Registre-se'}
+              signFunction={isLogin ? login : register}
+              signSchema={isLogin ? signInSchema : signUpSchema}
+            />
             <p className="text-center mt-4">
               {isLogin ? (
                 <span>

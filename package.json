@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "prisma migrate deploy",
+    "deploy-prisma": "prisma migrate deploy",
     "dev": "next dev",
-    "prebuild": "prisma generate",
-    "build": "next build",
+    "build": "npm run deploy-prisma && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest"

@@ -67,7 +67,7 @@ export default class NotificationService extends PageableBaseService {
   }
 
   async sendNotification(notification: Notification, variables: Record<string, string> = {}) {
-    this.emailService.sendNotification(notification, variables);
+    await this.emailService.sendNotification(notification, variables);
   }
 
 }

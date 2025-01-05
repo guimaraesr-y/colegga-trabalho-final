@@ -2,14 +2,15 @@ import nodemailer from "nodemailer";
 import { PrismaClient, Notification } from "@prisma/client";
 import path from "path";
 import fs from "fs/promises";
+import BaseService from "@/misc/baseService";
 
-const prisma = new PrismaClient();
-
-export default class EmailService {
+export default class EmailService extends BaseService {
   
   private transporter;
 
-  constructor() {
+  constructor(prisma?: PrismaClient) {
+    super(prisma);
+
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
@@ -57,22 +58,25 @@ export default class EmailService {
   }
   
 
-  async sendNotification(notification: Notification) {
-    const userNotifications = await prisma.userNotification.findMany({
+  async sendNotification(notification: Notification, variables: Record<string, string> = {}) {
+    const userNotifications = await this._prisma.userNotification.findMany({
       where: { notificationId: notification.id },
       include: { user: true },
     });
 
     const template = notification.template || "default";
-    const templateContent = await this.loadTemplate(template);
+    const templateContent =
+      notification.customEmailMessage ?? (await this.loadTemplate(template));
 
     for (const userNotification of userNotifications) {
       const { user } = userNotification;
+
       const personalizedContent = this.personalizeTemplate(templateContent, {
         title: notification.title,
         message: notification.message,
         userName: user.name!,
         emailMessage: notification.customEmailMessage || "",
+        ...variables,
       });
 
       await this.sendEmail({
@@ -82,7 +86,7 @@ export default class EmailService {
       });
     }
 
-    await prisma.notification.update({
+    await this._prisma.notification.update({
       where: { id: notification.id },
       data: { isSent: true },
     });

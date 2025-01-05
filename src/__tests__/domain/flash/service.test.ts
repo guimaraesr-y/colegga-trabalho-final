@@ -2,17 +2,12 @@ import mockPrisma from '@/__tests__/__mocks__/mockPrisma';
 import { mockFlashData } from '@/__tests__/utils/flashHelper';
 import { factoryMockNotificationService } from '@/__tests__/utils/notificationHelper';
 import FlashService from '@/domain/flash/service';
-import EmailService from '@/lib/emailService';
-
-const mockEmailService = {
-  sendNotification: jest.fn()
-} as unknown as jest.Mocked<EmailService>;
 
 const mockNotificationService = factoryMockNotificationService();
 
 describe('FlashService', () => {
 
-  const service = new FlashService(mockPrisma, mockEmailService, mockNotificationService);
+  const service = new FlashService(mockPrisma, mockNotificationService);
 
   it('should get a flash by id', async () => {
     const flash = mockFlashData();
@@ -124,7 +119,7 @@ describe('FlashService', () => {
         connect: { id: userId },
       }
     });
-    expect(mockEmailService.sendNotification).toHaveBeenCalledTimes(1);
+    expect(mockNotificationService.sendNotification).toHaveBeenCalledTimes(1);
 
     expect(result.likesCount).toBe(1);
   });

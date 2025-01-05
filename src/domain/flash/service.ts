@@ -1,4 +1,3 @@
-import EmailService from "@/lib/emailService";
 import { PageableBaseService } from "@/misc/baseService";
 import { PageableOptions } from "@/misc/pageable";
 import { Prisma, PrismaClient, Flash as PrismaFlash } from "@prisma/client";
@@ -11,12 +10,10 @@ export default class FlashService extends PageableBaseService {
 
   model = this._prisma.flash;
   
-  private emailService;
   private notificationService;
 
-  constructor(prisma?: PrismaClient, emailService = new EmailService(), notificationService = new NotificationService()) {
+  constructor(prisma?: PrismaClient, notificationService = new NotificationService()) {
     super(prisma);
-    this.emailService = emailService;
     this.notificationService = notificationService;
   }
 
@@ -89,7 +86,7 @@ export default class FlashService extends PageableBaseService {
         },
       });
 
-      this.emailService.sendNotification(
+      this.notificationService.sendNotification(
         await this.notificationService.createNotification({
           title: flash.title || '(Flash sem título)',
           message: "Um flash que você publicou acabou de ser curtido!",

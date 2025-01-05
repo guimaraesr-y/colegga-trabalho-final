@@ -1,19 +1,6 @@
-import NotificationService from "@/domain/notification/service";
+import NotificationService, { NotificationWithTargets } from "@/domain/notification/service";
 
-export interface MockNotificationInterface {
-  id: string;
-  title: string;
-  content: string;
-  authorId: string;
-  model: string;
-  template: string;
-  customEmailMessage: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export const factoryMockNotificationData = (overrides: Partial<MockNotificationInterface> = {}) => ({
+export const factoryMockNotificationData = (overrides: Partial<NotificationWithTargets> = {}) => ({
   id: "1",
   title: "Test Notification",
   content: "This is a test notification",
@@ -28,7 +15,7 @@ export const factoryMockNotificationData = (overrides: Partial<MockNotificationI
     { id: "2" },
   ],
   ...overrides,
-});
+} as NotificationWithTargets);
 
 export const factoryMockNotificationService = (overrides: Partial<NotificationService> = {}) => ({
   getNotification: jest.fn(),
@@ -36,5 +23,6 @@ export const factoryMockNotificationService = (overrides: Partial<NotificationSe
   createNotification: jest.fn(),
   deleteNotification: jest.fn(),
   deleteNotificationForUser: jest.fn(),
+  sendNotification: jest.fn(),
   ...overrides,
 } as unknown as jest.Mocked<NotificationService>);

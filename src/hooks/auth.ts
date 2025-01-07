@@ -7,6 +7,7 @@ export const useAuth = () => {
 
   const login = async (credentials: LoginCredentials) => {
     const data = await actions.login(credentials);
+    console.log(credentials)
 
     if (data.error) throw data.message;
 
@@ -15,8 +16,16 @@ export const useAuth = () => {
 
   const register = async (credentials: RegisterCredentials) => {
     const data = await actions.register(credentials);
-
-    if ('error' in data && data.error) throw data.message;
+    const loginCredentials = {
+      email: credentials.email,
+      password: credentials.password,
+    }
+    if ('error' in data && data.error) {
+      throw data.message;
+    } else {
+     login(loginCredentials) 
+    }
+    
 
     update!();
   }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post Curtido</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f8fc;
+        color: #333;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .email-header {
+        background-color: #0056b3;
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .email-body {
+        padding: 20px;
+      }
+
+      .email-body h1 {
+        color: #0056b3;
+        font-size: 20px;
+      }
+
+      .email-body p {
+        line-height: 1.6;
+        font-size: 16px;
+        margin: 10px 0;
+      }
+
+      .email-footer {
+        background-color: #f4f8fc;
+        color: #666;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
+        border-top: 1px solid #ddd;
+      }
+
+      .email-footer p {
+        margin: 5px 0;
+      }
+
+      .email-footer a {
+        color: #0056b3;
+        text-decoration: none;
+      }
+
+      .email-footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        <h1>Colegga</h1>
+      </div>
+      <div class="email-body">
+        <h1>Seu flash foi curtido! 🎉</h1>
+        <p>Olá, {{ userName }}!</p>
+        <p>
+          Ficamos felizes em informar que seu flash
+          <strong>"{{ title }}"</strong> recebeu uma nova curtida!
+        </p>
+        <p>
+          Continue interagindo com a comunidade Colegga e compartilhando seu
+          conhecimento.
+        </p>
+        <div style="color:#777;">
+          <hr />
+          <p>Atenciosamente,</p>
+          <p>Equipe Colegga.</p>
+        </div>
+      </div>
+      <div class="email-footer">
+        <p>
+          Este e-mail foi enviado automaticamente. Por favor, não responda a
+          esta mensagem.
+        </p>
+        <p>
+          Caso tenha dúvidas, entre em contato conosco em
+          <a href="mailto:support@colegga.com">support@colegga.com</a>
+        </p>
+        <p>© 2025 Colegga. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </body>
+</html>

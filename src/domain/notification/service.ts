@@ -1,14 +1,28 @@
+import EmailService from "@/lib/emailService";
 import { PageableBaseService } from "@/misc/baseService";
 import { PageableOptions } from "@/misc/pageable";
-import { Prisma, Notification as PrismaNotification } from "@prisma/client";
+import { Prisma, PrismaClient, Notification as PrismaNotification } from "@prisma/client";
 
 export type Notification = PrismaNotification;
+export type NotificationWithTargets = Prisma.NotificationGetPayload<{
+  include: {
+    targets: true
+  }
+}>
+export type CreateNotification = Prisma.NotificationCreateInput;
 export type FlashPageableOptions = PageableOptions<Prisma.NotificationWhereInput, Prisma.NotificationOrderByWithRelationInput>;
 
 // TODO: Needs testing
 export default class NotificationService extends PageableBaseService {
   
   protected model = this._prisma.notification;
+    
+    private emailService;
+  
+    constructor(prisma?: PrismaClient, emailService = new EmailService()) {
+      super(prisma);
+      this.emailService = emailService;
+    }
 
   async getNotification(notificationId: string) {
     return this._prisma.notification.findUnique({
@@ -23,7 +37,7 @@ export default class NotificationService extends PageableBaseService {
     return await pageableService.getPageable(options);
   }
 
-  async createNotification(data: Omit<Notification, "id" | "createdAt" | "updatedAt">) {
+  async createNotification(data: CreateNotification) {
     return this._prisma.notification.create({
       data,
     });
@@ -50,6 +64,10 @@ export default class NotificationService extends PageableBaseService {
         deleted: true,
       },
     })
+  }
+
+  async sendNotification(notification: Notification, variables: Record<string, string> = {}) {
+    await this.emailService.sendNotification(notification, variables);
   }
 
 }

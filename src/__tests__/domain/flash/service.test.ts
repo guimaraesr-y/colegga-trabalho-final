@@ -1,10 +1,13 @@
 import mockPrisma from '@/__tests__/__mocks__/mockPrisma';
 import { mockFlashData } from '@/__tests__/utils/flashHelper';
+import { factoryMockNotificationService } from '@/__tests__/utils/notificationHelper';
 import FlashService from '@/domain/flash/service';
+
+const mockNotificationService = factoryMockNotificationService();
 
 describe('FlashService', () => {
 
-  const service = new FlashService(mockPrisma);
+  const service = new FlashService(mockPrisma, mockNotificationService);
 
   it('should get a flash by id', async () => {
     const flash = mockFlashData();
@@ -76,12 +79,15 @@ describe('FlashService', () => {
   });
 
   it("should increment likesCount and add a like", async () => {
+    const flashTitle = "Test Flash";
     const flashId = "flash-123";
     const userId = "user-456";
 
     (mockPrisma.flash.findUnique as jest.Mock).mockResolvedValue({
       id: flashId,
+      title: flashTitle,
       likesCount: 0,
+      authorId: userId,
       likes: []
     });
 
@@ -104,6 +110,17 @@ describe('FlashService', () => {
         likes: { create: { userId } },
       },
     });
+    expect(mockNotificationService.createNotification).toHaveBeenCalledWith({
+      title: flashTitle,
+      message: "Um flash que você publicou acabou de ser curtido!",
+      template: "liked-flash",
+      model: "flash",
+      targets: {
+        connect: { id: userId },
+      }
+    });
+    expect(mockNotificationService.sendNotification).toHaveBeenCalledTimes(1);
+
     expect(result.likesCount).toBe(1);
   });
 

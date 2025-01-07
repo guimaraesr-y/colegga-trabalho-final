@@ -24,6 +24,8 @@ model User {
   flashes      Flash[]            @relation("flashes")
   likedFlashes UserLikedFlashes[]
 
+  events Event[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -34,9 +36,9 @@ model Notification {
   title    String
   message  String
   sendDate DateTime?
-  
-  isActive Boolean   @default(true)
-  isSent   Boolean   @default(false)
+
+  isActive Boolean @default(true)
+  isSent   Boolean @default(false)
 
   targets UserNotification[]
 
@@ -96,4 +98,64 @@ model UserLikedFlashes {
   createdAt DateTime @default(now())
 
   @@id([flashId, userId])
+}
+
+// Events
+model Event {
+  id          String  @id @default(cuid())
+  title       String?
+  description String?
+
+  start DateTime
+  end   DateTime
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  recurrence   Recurrence? @relation(fields: [recurrenceId], references: [id])
+  recurrenceId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Recurrence {
+  id           String                 @id @default(cuid())
+  frequency    Frequency
+  interval     Int // Number of intervals (e.g., every 2 days, every 3 weeks)
+  daysOfWeek   Json? // Days of the week for weekly recurrence (0 = Sunday, 6 = Saturday)
+  endCondition RecurrenceEndCondition
+  startDate    DateTime
+  endDate      DateTime? // If endCondition is DATE
+  occurrences  Int? // If endCondition is OCCURRENCES
+
+  exceptions Exclusion[]
+
+  events Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exclusion {
+  id           String     @id @default(cuid())
+  recurrence   Recurrence @relation(fields: [recurrenceId], references: [id])
+  recurrenceId String
+  excludeDate  DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum RecurrenceEndCondition {
+  NEVER
+  DATE
+  OCCURRENCES
 }

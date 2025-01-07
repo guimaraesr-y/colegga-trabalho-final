@@ -13,12 +13,12 @@ export default abstract class BaseService {
 }
 
 export abstract class PageableBaseService extends BaseService {
-  
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected abstract model: any;
 
-  protected getPageableService() {
-    return new PageableService<typeof this.model.fields>(this.model);
+  protected getPageableService<T>() {
+    return new PageableService<T>(this.model);
   }
 
 }

@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "deploy-prisma": "prisma migrate deploy",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run deploy-prisma && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest"
@@ -18,6 +19,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@shadcn/ui": "^0.0.4",
     "@types/bcrypt": "^5.0.2",
+    "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -26,6 +28,7 @@
     "lucide-react": "^0.469.0",
     "next": "14.2.13",
     "next-auth": "^5.0.0-beta.25",
+    "nodemailer": "^6.9.16",
     "react": "^18",
     "react-big-calendar": "^1.17.1",
     "react-dom": "^18",

@@ -1,18 +1,39 @@
 import BCrypt from "@/lib/bcrypt";
 import { signInSchema, signUpSchema } from "./schema";
-import { prisma } from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
+import BaseService from "@/misc/baseService";
+import { PrismaClient, User as PrismaUser } from "@prisma/client";
+import { UserAlreadyExists } from "./errors/userAlreadyExists";
+import { InvalidCredentialsError } from "./errors/invalidCredentialsError";
+import { UserNotFound } from "./errors/userNotFound";
+import NotificationService from "../notification/service";
 
 export type LoginCredentials = typeof signInSchema._type
 export type RegisterCredentials = typeof signUpSchema._type
+export type User = PrismaUser
 
-// TODO: Needs testing
-export default class AuthService {
+export default class AuthService extends BaseService {
 
-  private _prisma: PrismaClient;
+  private notificationService;
 
-  constructor(_prisma: PrismaClient = prisma) {
-    this._prisma = _prisma;
+  constructor(prisma?: PrismaClient, notificationService = new NotificationService()) {
+    super(prisma);
+    this.notificationService = notificationService
+  }
+
+  async getUser(userId: string) {
+    return this._prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  }
+
+  async getUserByEmail(email: string) {
+    return this._prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
   }
 
   async login(credentials: LoginCredentials) {
@@ -25,13 +46,11 @@ export default class AuthService {
     })
 
     if (!user) {
-      // TODO: Implement custom errors
-      throw new Error("User not found");
+      throw new UserNotFound();
     }
 
     if (!BCrypt.compare(password, user.password!)) {
-      // TODO: Implement custom errors
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentialsError();
     }
 
     return user;
@@ -46,8 +65,7 @@ export default class AuthService {
     })
 
     if (userExists) {
-      // TODO: Implement custom errors
-      throw new Error("User already exists");
+      throw new UserAlreadyExists();
     }
 
     const user = await this._prisma.user.create({
@@ -57,6 +75,18 @@ export default class AuthService {
         name,
       }
     });
+
+    this.notificationService.sendNotification(
+      await this.notificationService.createNotification({
+        title: user.name || '(Sem nome)',
+        message: "Novo usuário cadastrado!",
+        template: "welcome-user",
+        model: "register",
+        targets: {
+          connect: { id: user.id },
+        }
+      })
+    )
 
     return user;
   }

@@ -7,7 +7,6 @@ export const useAuth = () => {
 
   const login = async (credentials: LoginCredentials) => {
     const data = await actions.login(credentials);
-    console.log(credentials)
 
     if (data.error) throw data.message;
 
@@ -23,7 +22,7 @@ export const useAuth = () => {
     if ('error' in data && data.error) {
       throw data.message;
     } else {
-     login(loginCredentials) 
+      login(loginCredentials) 
     }
     
 

@@ -1,5 +1,6 @@
 import mockPrisma from "@/__tests__/__mocks__/mockPrisma";
 import { factoryMockEventData } from "@/__tests__/utils/eventHelper";
+import { EventNotFoundError } from "@/domain/event/errors/eventNotFoundError";
 import { EventService } from "@/domain/event/service";
 
 describe("EventService", () => {
@@ -98,6 +99,53 @@ describe("EventService", () => {
         },
         include: { recurrence: true },
       });
+    });
+  });
+
+  
+  describe("deleteEvent", () => {
+    it("should delete an event", async () => {
+      const event = factoryMockEventData();
+
+      (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(event);
+
+      await service.deleteEvent(event.id);
+
+      expect(mockPrisma.event.delete).toHaveBeenCalledWith({
+        where: { id: event.id },
+      });
+    });
+
+    it("should throw an error if the event does not exist", async () => {
+      (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.deleteEvent("invalid-id")).rejects.toThrow(new EventNotFoundError().message);
+    });
+  });
+
+  describe("updateEvent", () => {
+    it("should update an event", async () => {
+      const event = factoryMockEventData();
+
+      (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(event);
+      (mockPrisma.event.update as jest.Mock).mockResolvedValue(event);
+
+      await service.updateEvent(event.id, {
+        title: "Updated title",
+      });
+
+      expect(mockPrisma.event.update).toHaveBeenCalledWith({
+        where: { id: event.id },
+        data: {
+          title: "Updated title",
+        },
+      });
+    });
+
+    it("should throw an error if the event does not exist", async () => {
+      (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.updateEvent("invalid-id", {})).rejects.toThrow(new EventNotFoundError().message);
     });
   });
 

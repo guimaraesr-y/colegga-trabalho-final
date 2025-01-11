@@ -15,10 +15,16 @@ export const useAuth = () => {
 
   const register = async (credentials: RegisterCredentials) => {
     const data = await actions.register(credentials);
+    const loginCredentials = {
+      email: credentials.email,
+      password: credentials.password,
+    }
 
-    if ('error' in data && data.error) throw data.message;
+    if ('error' in data && data.error) {
+      throw data.message;
+    }
 
-    update!();
+    login(loginCredentials);
   }
 
   const logout = async () => {

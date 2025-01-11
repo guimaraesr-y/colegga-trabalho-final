@@ -1,10 +1,15 @@
 import mockPrisma from "@/__tests__/__mocks__/mockPrisma";
 import { factoryMockNotificationData } from "@/__tests__/utils/notificationHelper";
 import NotificationService from "@/domain/notification/service";
+import EmailService from "@/lib/emailService";
+
+const mockEmailService = {
+  sendNotification: jest.fn(),
+} as unknown as jest.Mocked<EmailService>;
 
 describe("NotificationService", () => {
 
-  const service = new NotificationService(mockPrisma);
+  const service = new NotificationService(mockPrisma, mockEmailService);
 
   it("should get a notification by id", async () => {
     const notification = { id: "notification-123", title: "Test Notification", message: "This is a test notification" };
@@ -64,4 +69,12 @@ describe("NotificationService", () => {
       data: { deleted: true },
     });
   });
+
+  it("should send a notification", async () => {
+    const notification = factoryMockNotificationData();
+
+    await service.sendNotification(notification);
+    expect(mockEmailService.sendNotification).toHaveBeenCalledTimes(1);
+  });
+
 });

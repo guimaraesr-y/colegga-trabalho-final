@@ -2,15 +2,18 @@ import BCrypt from "@/lib/bcrypt";
 import AuthService from "@/domain/auth/authService";
 import { mockUserData } from "../../utils/authHelper";
 import mockPrisma from "@/__tests__/__mocks__/mockPrisma";
+import { factoryMockNotificationService } from "@/__tests__/utils/notificationHelper";
 
 jest.mock("@/lib/bcrypt.ts", () => ({
   compare: jest.fn() as jest.MockedFunction<typeof BCrypt.compare>,
   hash: jest.fn() as jest.MockedFunction<typeof BCrypt.hash>,
 }));
 
+const mockNotificationService = factoryMockNotificationService();
+
 describe("AuthService", () => {
 
-  const authService = new AuthService(mockPrisma);
+  const authService = new AuthService(mockPrisma, mockNotificationService);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -73,6 +76,7 @@ describe("AuthService", () => {
       },
     });
     expect(user.email).toBe(data.email);
+    expect(mockNotificationService.sendNotification).toHaveBeenCalledTimes(1);
   });
 
   it("should throw an error if user already exists", async () => {
@@ -87,4 +91,5 @@ describe("AuthService", () => {
       })
     ).rejects.toThrow(Error);
   });
+
 });

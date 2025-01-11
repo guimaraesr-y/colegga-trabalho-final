@@ -19,14 +19,12 @@ export const useAuth = () => {
       email: credentials.email,
       password: credentials.password,
     }
+
     if ('error' in data && data.error) {
       throw data.message;
-    } else {
-      login(loginCredentials) 
     }
-    
 
-    update!();
+    login(loginCredentials);
   }
 
   const logout = async () => {

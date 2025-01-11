@@ -76,19 +76,25 @@ export default class AuthService extends BaseService {
       }
     });
 
-    this.notificationService.sendNotification(
-      await this.notificationService.createNotification({
-        title: user.name || '(Sem nome)',
-        message: "Novo usuário cadastrado!",
-        template: "welcome-user",
-        model: "register",
-        targets: {
-          connect: { id: user.id },
-        }
-      })
-    )
+    this.sendRegisteredNotification(user);
 
     return user;
+  }
+
+  private async sendRegisteredNotification(user: User) {
+    const notification = await this.notificationService.createNotification({
+      title: user.name || '(Sem nome)',
+      message: "Novo usuário cadastrado!",
+      template: "welcome-user",
+      model: "register",
+      targets: {
+        create: {
+          userId: user.id
+        }
+      }
+    })
+
+    this.notificationService.sendNotification(notification)
   }
 
 }

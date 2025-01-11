@@ -58,6 +58,17 @@ describe("EventService", () => {
       expect(retrievedEvents.total).toEqual(events.length);
       expect(retrievedEvents.data).toEqual(events);
     });
+
+    it("should return events by id", async () => {
+      const event = factoryMockEventData();
+
+      (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(event);
+
+      const retrievedEvent = await service.getEventById(event.id);
+      console.log(retrievedEvent, event)
+
+      expect(retrievedEvent).toEqual(event);
+    });
   })
 
   describe("getEventsForDateRange", () => {

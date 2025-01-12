@@ -8,6 +8,8 @@ export type CreateEventInput = Prisma.EventCreateInput;
 export type UpdateEventInput = Prisma.EventUpdateInput;
 export type EventPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prisma.FlashOrderByWithRelationInput>
 
+// TODO: Implement ocurrences creation (gotta edit model too)
+
 export class EventService extends PageableBaseService {
 
   model = this._prisma.event

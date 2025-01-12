@@ -1,18 +1,21 @@
 import BaseService from "@/misc/baseService";
-import { Frequency, RecurrenceEndCondition } from "@prisma/client";
+import { Prisma, PrismaClient, Recurrence as PrismaRecurrence } from "@prisma/client";
 import { RRule, RRuleSet } from "rrule";
+import { InvalidDaysOfWeekError } from "./errors/InvalidDaysOfWeekError";
+import { RecurrenceNotFoundError } from "./errors/recurrenceNotFoundError";
+
+export type Recurrence = PrismaRecurrence;
+export type CreateRecurrenceInput = Prisma.RecurrenceCreateInput;
 
 export class RecurrenceService extends BaseService {
 
-  async createRecurrence(data: {
-    frequency: Frequency;
-    interval: number;
-    daysOfWeek?: number[];
-    endCondition: RecurrenceEndCondition;
-    startDate: Date;
-    endDate?: Date;
-    occurrences?: number;
-  }) {
+  private readonly weekDayMap = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
+
+  constructor(_prisma?: PrismaClient) {
+    super(_prisma);
+  }
+
+  async createRecurrence(data: CreateRecurrenceInput) {
     return this._prisma.recurrence.create({
       data,
     });
@@ -34,26 +37,14 @@ export class RecurrenceService extends BaseService {
     });
 
     if (!recurrence) {
-      throw new Error("Recurrence not found");
+      throw new RecurrenceNotFoundError();
     }
 
     // Parse daysOfWeek from JSON if it exists
-    let daysOfWeek: number[] | undefined = undefined;
-    if (recurrence.daysOfWeek) {
-      try {
-        daysOfWeek = JSON.parse(recurrence.daysOfWeek as unknown as string);
-        if (!Array.isArray(daysOfWeek) || !daysOfWeek.every(Number.isInteger)) {
-          throw new Error("Invalid daysOfWeek format");
-        }
-      } catch (error) {
-        console.error("Failed to parse daysOfWeek:", error);
-        throw new Error("Invalid daysOfWeek value");
-      }
-    }
+    const daysOfWeek = this.parseDaysOfWeek(recurrence.daysOfWeek?.toString());
 
     // Map numeric days to RRule weekdays
-    const weekDayMap = [RRule.SU, RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
-    const rruleDaysOfWeek = daysOfWeek?.map((d) => weekDayMap[d]) || undefined;
+    const rruleDaysOfWeek = daysOfWeek?.map((d) => this.weekDayMap[d]) || undefined;
 
     const rule = new RRule({
       freq: RRule[recurrence.frequency],
@@ -74,6 +65,24 @@ export class RecurrenceService extends BaseService {
     }
 
     return ruleSet.all();
+  }
+
+  private parseDaysOfWeek(daysOfWeek?: string): number[] | undefined {
+    if (!daysOfWeek) {
+      return undefined;
+    }
+
+    try {
+      daysOfWeek = JSON.parse(daysOfWeek as unknown as string);
+      if (!Array.isArray(daysOfWeek) || !daysOfWeek.every(Number.isInteger)) {
+        throw new InvalidDaysOfWeekError();
+      }
+    } catch (error) {
+      console.error("Failed to parse daysOfWeek:", error);
+      throw new InvalidDaysOfWeekError();
+    }
+
+    return daysOfWeek;
   }
   
 }

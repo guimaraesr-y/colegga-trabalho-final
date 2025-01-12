@@ -40,6 +40,22 @@ const mockPrisma = {
     delete: jest.fn(),
     count: jest.fn(),
   },
+  recurrence: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
+  exclusion: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
   $transaction: jest.fn(async (callback: (prisma: any) => Promise<any>) => {
     return await callback(mockPrisma);
   }),

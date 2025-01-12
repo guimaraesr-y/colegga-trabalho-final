@@ -66,7 +66,6 @@ describe("EventService", () => {
       (mockPrisma.event.findUnique as jest.Mock).mockResolvedValue(event);
 
       const retrievedEvent = await service.getEventById(event.id);
-      console.log(retrievedEvent, event)
 
       expect(retrievedEvent).toEqual(event);
     });

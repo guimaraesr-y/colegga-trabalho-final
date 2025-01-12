@@ -1,10 +1,6 @@
-// components/FlashCard.tsx
-'use client';
-
 import { useState } from 'react';
-import { FaRegCommentDots } from 'react-icons/fa';
-import { FaRegHeart, FaHeart } from 'react-icons/fa';
-
+import FlashCardDetails from './flash-card-details'; // Import the new component
+import { FaRegHeart, FaHeart, FaRegCommentDots } from 'react-icons/fa';
 type Comment = {
   id: number;
   content: string;
@@ -12,7 +8,7 @@ type Comment = {
   comments: Comment[];
 };
 
-type FlashCardData = {
+export type FlashCardData = {
   id: number;
   content: string;
   likes: number;
@@ -25,84 +21,58 @@ type FlashCardProps = {
 };
 
 export default function FlashCard({ data, onComment }: FlashCardProps) {
-  const [likes, setLikes] = useState(data.likes || 0);
   const [liked, setLiked] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [newComment, setNewComment] = useState('');
+  const [flashCardData, setFlashCardData] = useState(data);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
-    }
+  const handleLikeToggle = () => {
     setLiked(!liked);
+    setFlashCardData((prevData) => ({
+      ...prevData,
+      likes: prevData.likes + (!liked ? 1 : -1), // Incrementa ou decrementa baseado no estado
+    }));
   };
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      onComment(newComment, data.id);
-      setNewComment('');
-    }
-  };
-
-  return (
-    <div
-      className="border p-4 rounded-lg shadow mb-4 cursor-pointer"
-      onClick={() => setShowDetails(!showDetails)}
-    >
-      <p className="mb-2">{data.content}</p>
-      <div className="flex items-center gap-6">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleLike();
-          }}
-          className="text-red-500 flex items-center gap-1"
-        >
-          {liked ? <FaHeart size={20} /> : <FaRegHeart size={20} />} {likes}  
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowDetails(!showDetails);
-          }}
-          className="text-gray-500 flex items-center gap-1"
-        >
-          <FaRegCommentDots size={20} /> {data.comments.length}
-        </button>
+  return ( 
+    <>  
+      <div
+        className="border p-4 rounded-lg shadow mb-4 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDetails(true);
+        }}
+      >
+        <p className="mb-2">{flashCardData.content}</p>
+        <div className="flex items-center gap-6">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLikeToggle(); 
+            }}
+            className="text-red-500 flex items-center gap-1"
+          >
+            {liked ? <FaHeart size={20} /> : <FaRegHeart size={20} />} {flashCardData.likes}
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDetails(true);
+            }}
+            className="text-gray-500 flex items-center gap-1"
+          >
+            <FaRegCommentDots size={20} /> {flashCardData.comments.length}
+          </button>
+        </div>
       </div>
       {showDetails && (
-        <div className="mt-4">
-          {data.comments.map((comment) => (
-            <div key={comment.id} className="ml-4">
-              <FlashCard
-                data={comment}
-                onComment={(subComment, parentId) => onComment(subComment, parentId || comment.id)}
-              />
-            </div>
-          ))}
-          <div className="mt-2">
-            <input
-              type="text"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="border p-2 w-full rounded"
-              placeholder="Add a comment"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddComment();
-              }}
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
-            >
-              Add
-            </button>
-          </div>
-        </div>
+        <FlashCardDetails
+          data={flashCardData}
+          onClose={() => setShowDetails(false)}
+          onLike={() => handleLikeToggle()} // Sincroniza com detalhes
+          isLiked={liked}
+          onComment={onComment}
+        />
       )}
-    </div>
+    </>
   );
 }

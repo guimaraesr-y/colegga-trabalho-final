@@ -167,7 +167,6 @@ export default function FlashCardDetails({
         )}
       </div>
     ));
-
   if (focusedComment) {
     return (
       <FlashCardDetails
@@ -177,7 +176,10 @@ export default function FlashCardDetails({
           likes: focusedComment.likes,
           comments: focusedComment.comments,
         }}
-        onClose={() => setFocusedComment(null)}
+        onClose={() => {
+          onClose()
+          setFocusedComment(null)
+        }}
         onLike={(liked) => handleCommentLike(focusedComment.id)}
         isLiked={focusedComment.isLiked}
         onComment={(comment, parentId) =>

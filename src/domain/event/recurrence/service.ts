@@ -30,7 +30,7 @@ export class RecurrenceService extends BaseService {
     });
   }
 
-  async getOccurrences(recurrenceId: string) {
+  async getRuleSet(recurrenceId: string) {
     const recurrence = await this._prisma.recurrence.findUnique({
       where: { id: recurrenceId },
       include: { exceptions: true },
@@ -41,22 +41,32 @@ export class RecurrenceService extends BaseService {
     }
 
     // Parse daysOfWeek from JSON if it exists
-    const daysOfWeek = this.parseDaysOfWeek(recurrence.daysOfWeek?.toString());
+    let daysOfWeek: number[] | undefined;
+    try {
+      daysOfWeek = this.parseDaysOfWeek(recurrence.daysOfWeek?.toString());
+    } catch {
+      daysOfWeek = undefined;
+    }
 
     // Map numeric days to RRule weekdays
     const rruleDaysOfWeek = daysOfWeek?.map((d) => this.weekDayMap[d]) || undefined;
 
     const rule = new RRule({
-      freq: RRule[recurrence.frequency],
-      interval: recurrence.interval,
-      byweekday: rruleDaysOfWeek,
       dtstart: new Date(recurrence.startDate),
-      until: recurrence.endDate || undefined,
-      count: recurrence.occurrences || undefined,
+      freq: RRule[recurrence.frequency],
+      ...(recurrence.interval ? { interval: recurrence.interval } : {}),
+      ...(rruleDaysOfWeek ? { byweekday: rruleDaysOfWeek } : {}),
+      ...(recurrence.endDate ? { until: new Date(recurrence.endDate) } : {}),
+      ...(recurrence.occurrences ? { count: recurrence.occurrences } : {}),
+      ...(recurrence.endCondition === "DATE" ? { until: new Date(recurrence.endDate as unknown as string) } : {}),
     });
 
     const ruleSet = new RRuleSet();
-    ruleSet.rrule(rule);
+    ruleSet.rrule(rule)
+
+    if (!rule.options.until && !rule.options.count) {
+      // TODO: Handle infinite recurrences
+    }
 
     if (recurrence.exceptions.length) {
       recurrence.exceptions.forEach((exception) => {
@@ -64,7 +74,11 @@ export class RecurrenceService extends BaseService {
       });
     }
 
-    return ruleSet.all();
+    return ruleSet;
+  }
+
+  async getOccurrences(recurrenceId: string) {
+    return (await this.getRuleSet(recurrenceId)).all();
   }
 
   private parseDaysOfWeek(daysOfWeek?: string): number[] | undefined {

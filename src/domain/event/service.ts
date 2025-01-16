@@ -2,6 +2,7 @@ import { PageableBaseService } from "@/misc/baseService";
 import { PageableOptions } from "@/misc/pageable";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { EventNotFoundError } from "./errors/eventNotFoundError";
+import { RecurrenceService } from "./recurrence/service";
 
 export type Event = Prisma.EventGetPayload<{ include: { recurrence: true } }>
 export type CreateEventInput = Prisma.EventCreateInput;
@@ -13,9 +14,11 @@ export type EventPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prism
 export class EventService extends PageableBaseService {
 
   model = this._prisma.event
+  private recurrenceService: RecurrenceService
 
-  constructor(_prisma?: PrismaClient) {
+  constructor(_prisma?: PrismaClient, recurrenceService = new RecurrenceService()) {
     super(_prisma);
+    this.recurrenceService = recurrenceService;
   }
 
   async createEvent(data: CreateEventInput) {
@@ -37,7 +40,7 @@ export class EventService extends PageableBaseService {
   }
 
   async getEventsForDateRange(userId: string, start: Date, end: Date) {
-    return this._prisma.event.findMany({
+    const events = await this._prisma.event.findMany({
       where: {
         ownerId: userId,
         OR: [
@@ -54,13 +57,32 @@ export class EventService extends PageableBaseService {
           },
         ],
       },
-      include: { recurrence: true },
     });
+
+    // Process recurring events to calculate instances
+    const recurringInstances = await Promise.all(
+      events
+        .filter((event) => event.recurrenceId)
+        .flatMap(async (event) => {
+          const ruleSet = await this.recurrenceService.getRuleSet(event.recurrenceId!);
+
+          const instancesInRange = ruleSet.between(start, end);
+          
+          return instancesInRange.map((instance) => ({
+            ...event,
+            start: instance,
+            end: new Date(instance.getTime() + (event.end.getTime() - event.start.getTime())),
+          }));
+        })
+    );
+
+    const nonRecurringEvents = events.filter((event) => !event.recurrenceId);
+    return [...nonRecurringEvents, ...recurringInstances.flat(1)];
   }
 
   async deleteEvent(eventId: string) {
     const event = await this.getEventById(eventId);
-    if(!event) throw new EventNotFoundError();
+    if (!event) throw new EventNotFoundError();
 
     return await this._prisma.event.delete({
       where: { id: eventId },
@@ -69,7 +91,7 @@ export class EventService extends PageableBaseService {
 
   async updateEvent(eventId: string, data: UpdateEventInput) {
     const event = await this.getEventById(eventId);
-    if(!event) throw new EventNotFoundError();
+    if (!event) throw new EventNotFoundError();
 
     return await this._prisma.event.update({
       where: { id: eventId },

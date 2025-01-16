@@ -1,11 +1,15 @@
 import mockPrisma from "@/__tests__/__mocks__/mockPrisma";
 import { factoryMockEventData } from "@/__tests__/utils/eventHelper";
 import { EventNotFoundError } from "@/domain/event/errors/eventNotFoundError";
+import { RecurrenceService } from "@/domain/event/recurrence/service";
 import { EventService } from "@/domain/event/service";
+import { Frequency, RecurrenceEndCondition } from "@prisma/client";
+
+const recurrenceService = new RecurrenceService(mockPrisma);
 
 describe("EventService", () => {
 
-  const service = new EventService(mockPrisma);
+  const service = new EventService(mockPrisma, recurrenceService);
 
   describe("createEvent", () => {
     it("should create an event", async () => {
@@ -96,9 +100,42 @@ describe("EventService", () => {
             },
           ],
         },
-        include: { recurrence: true },
       });
     });
+
+    it("should return events with recurrences", async () => {
+      const userId = "user-123";
+      const startDate = new Date("2025-01-01");
+      const startSearchDate = new Date("2025-02-01");
+      const endDate = new Date("2025-02-31");
+      const recurrence =  {
+        id: "recurrence-123",
+        startDate: startDate,
+        endDate: endDate,
+        frequency: "DAILY" as Frequency,
+        interval: 1,
+        daysOfWeek: null,
+        endCondition: "DATE" as RecurrenceEndCondition,
+        occurrences: null,
+        exceptions: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+
+      const events = [
+        factoryMockEventData({
+          recurrenceId: "recurrence-123",
+          recurrence: recurrence,
+        }),
+      ];
+
+      (mockPrisma.event.findMany as jest.Mock).mockResolvedValue(events);
+      (mockPrisma.recurrence.findUnique as jest.Mock).mockResolvedValue(recurrence);
+
+      const retrievedEvents = await service.getEventsForDateRange(userId, startSearchDate, endDate);
+
+      expect(retrievedEvents.length).toEqual(29);
+    })
   });
 
   

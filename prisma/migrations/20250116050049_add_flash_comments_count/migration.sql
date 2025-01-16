@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Flash` ADD COLUMN `commentsCount` INTEGER NOT NULL DEFAULT 0;

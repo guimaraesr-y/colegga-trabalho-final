@@ -34,9 +34,9 @@ model Notification {
   title    String
   message  String
   sendDate DateTime?
-  
-  isActive Boolean   @default(true)
-  isSent   Boolean   @default(false)
+
+  isActive Boolean @default(true)
+  isSent   Boolean @default(false)
 
   targets UserNotification[]
 
@@ -72,9 +72,10 @@ model Flash {
   content   String?
   isComment Boolean @default(false)
 
-  related Flash[] @relation("FlashComments")
-  refId   String?
-  ref     Flash?  @relation("FlashComments", fields: [refId], references: [id])
+  related       Flash[] @relation("FlashComments")
+  refId         String?
+  ref           Flash?  @relation("FlashComments", fields: [refId], references: [id])
+  commentsCount Int     @default(0)
 
   authorId String
   author   User   @relation("flashes", fields: [authorId], references: [id], onDelete: Cascade)

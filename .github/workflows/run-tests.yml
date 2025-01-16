@@ -18,6 +18,9 @@ jobs:
 
     - name: Init Prisma
       run: npx prisma generate
+    
+    - name: Run lint
+      run: npm run lint
 
     - name: Run Tests
       run: npm test -- --no-coverage

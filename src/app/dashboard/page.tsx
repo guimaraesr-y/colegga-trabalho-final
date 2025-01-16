@@ -19,7 +19,7 @@ export default function DashboardPage(): JSX.Element {
   const { } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/");
+      router.push("/")
     }
   });
 

@@ -1,19 +1,22 @@
+import { Recurrence } from "@/domain/event/recurrence/service";
 import { Event, EventService } from "@/domain/event/service";
 
 export const factoryMockEventData = (overrides: Partial<Event> = {}) => ({
   id: "1",
   title: "Test Event",
-  content: "This is a test event",
-  model: "Flash",
-  template: "default",
-  customEmailMessage: null,
-  isActive: true,
+  description: "This is a test event",
+  start: new Date(),
+  end: new Date(),
+  ownerId: "user-123",
+  owner: {
+    id: "user-123",
+    name: "John Doe",
+    email: "johndoe@example.com",
+  },
+  recurrenceId: null,
+  recurrence: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-  targets: [
-    { id: "1" },
-    { id: "2" },
-  ],
   ...overrides,
 } as Event);
 

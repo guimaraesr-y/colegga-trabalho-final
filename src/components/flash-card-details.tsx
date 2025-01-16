@@ -8,7 +8,7 @@ type Comment = {
   id: number;
   content: string;
   likes: number;
-  isLiked: boolean;
+  isLiked?: boolean;
   comments: Comment[];
 };
 
@@ -16,7 +16,7 @@ type FlashCardDetailsProps = {
   data: FlashCardData;
   onClose: () => void;
   onLike: (liked: boolean) => void;
-  isLiked: boolean;
+  isLiked?: boolean;
   onComment: (comment: string, parentId?: number) => void;
 };
 
@@ -40,10 +40,10 @@ export default function FlashCardDetails({
       })),
     }))
   );
-
   const [replyInputs, setReplyInputs] = useState<{ [key: number]: string }>({});
   const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>({});
   const [focusedComment, setFocusedComment] = useState<Comment | null>(null);
+  const [lastContentSeen, setLastContentSeen] = useState<FlashCardData | null>(null)
 
   const handleLike = () => {
     setLikes(likes + (!liked ? 1 : -1));
@@ -103,6 +103,12 @@ export default function FlashCardDetails({
   };
 
   const openCommentAsMain = (comment: Comment) => {
+    setLastContentSeen({
+      ...data,
+      content: data.content, 
+      likes: likes,
+      comments: comments,
+    });
     setFocusedComment(comment); 
   };
 
@@ -177,11 +183,14 @@ export default function FlashCardDetails({
           comments: focusedComment.comments,
         }}
         onClose={() => {
-          onClose()
-          setFocusedComment(null)
+          setFocusedComment(null);
+          if (lastContentSeen) {
+            setComments(lastContentSeen.comments); // Restaura os comentários
+            setLikes(lastContentSeen.likes); // Restaura os likes
+          }
         }}
         onLike={(liked) => handleCommentLike(focusedComment.id)}
-        isLiked={focusedComment.isLiked}
+        isLiked={focusedComment?.isLiked}
         onComment={(comment, parentId) =>
           handleAddComment(comment, parentId || focusedComment.id)
         }

@@ -17,10 +17,9 @@ export type FlashCardData = {
 
 type FlashCardProps = {
   data: FlashCardData;
-  onComment: (comment: string, parentId?: number) => void;
 };
 
-export default function FlashCard({ data, onComment }: FlashCardProps) {
+export default function FlashCard({ data }: FlashCardProps) {
   const [liked, setLiked] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [flashCardData, setFlashCardData] = useState(data);
@@ -70,7 +69,6 @@ export default function FlashCard({ data, onComment }: FlashCardProps) {
           onClose={() => setShowDetails(false)}
           onLike={() => handleLikeToggle()} // Sincroniza com detalhes
           isLiked={liked}
-          onComment={onComment}
         />
       )}
     </>

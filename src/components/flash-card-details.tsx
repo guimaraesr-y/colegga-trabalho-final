@@ -17,7 +17,6 @@ type FlashCardDetailsProps = {
   onClose: () => void;
   onLike: (liked: boolean) => void;
   isLiked: boolean;
-  onComment: (comment: string, parentId?: number) => void;
 };
 
 export default function FlashCardDetails({
@@ -25,7 +24,6 @@ export default function FlashCardDetails({
   onClose,
   onLike,
   isLiked,
-  onComment,
 }: FlashCardDetailsProps) {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(data.likes);
@@ -182,9 +180,6 @@ export default function FlashCardDetails({
         }}
         onLike={(liked) => handleCommentLike(focusedComment.id)}
         isLiked={focusedComment.isLiked}
-        onComment={(comment, parentId) =>
-          handleAddComment(comment, parentId || focusedComment.id)
-        }
       />
     );
   }

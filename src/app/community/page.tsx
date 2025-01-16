@@ -3,6 +3,8 @@
 
 import { useState } from 'react';
 import FlashCard from '@/components/flash-card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 type Comment = {
   id: number;
@@ -36,55 +38,30 @@ export default function DashboardPage() {
     }
   };
 
-  const handleComment = (comment: string, parentId?: number) => {
-    const addCommentRecursive = (cards: FlashCardData[]): FlashCardData[] =>
-      cards.map((card) => {
-        if (card.id === parentId) {
-          return {
-            ...card,
-            comments: [
-              ...card.comments,
-              { id: Date.now(), content: comment, likes: 0, comments: [] },
-            ],
-          };
-        }
-        return {
-          ...card,
-          comments: addCommentRecursive(card.comments),
-        };
-      });
-  
-    setFlashCards((prevFlashCards) =>
-      parentId ? addCommentRecursive(prevFlashCards) : prevFlashCards
-    );
-  };
-  
-
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4">Comunidade</h1>
       <div className="mb-6">
-        <input
+        <Input
           type="text"
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
-          className="border p-2 w-full rounded mb-2"
-          placeholder="What's on your mind?"
+          className="border p-2 w-full rounded mb-2 hover:bg-gray-50"
+          placeholder="O que estou pensando?"
         />
-        <button
+        <Button
           onClick={handleAddFlashCard}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
-          Post
-        </button>
+          Flash
+        </Button>
       </div>
       <div>
         {flashCards.map((card) => (
           <FlashCard
-          key={card.id}
-          data={card}
-          onComment={(comment, parentId) => handleComment(comment, parentId || card.id)}
-        />
+            key={card.id}
+            data={card}
+          />
         ))}
       </div>
     </div>

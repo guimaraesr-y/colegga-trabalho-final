@@ -37,6 +37,17 @@ export default class FlashService extends PageableBaseService {
       data: flash,
     });
 
+    if (createdFlash.refId) {
+      this._prisma.flash.update({
+        where: {
+          id: createdFlash.refId,
+        },
+        data: {
+          commentsCount: { increment: 1 },
+        }
+      })
+    }
+
     return createdFlash;
   }
 
@@ -46,6 +57,17 @@ export default class FlashService extends PageableBaseService {
         id,
       }
     });
+
+    if(deletedFlash.refId) {
+      this._prisma.flash.update({
+        where: {
+          id: deletedFlash.refId,
+        },
+        data: {
+          commentsCount: { decrement: 1 },
+        }
+      })
+    }
 
     return deletedFlash;
   }

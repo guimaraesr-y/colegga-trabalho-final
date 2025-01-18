@@ -29,6 +29,10 @@ export default class TaskService extends BaseService {
     return task;
   }
 
+  async getTasks() {
+    return this._prisma.task.findMany();
+  }
+
   async createTask(data: CreateTaskInput) {
     const task = await this._prisma.task.create({
       data,

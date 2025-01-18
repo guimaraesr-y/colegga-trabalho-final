@@ -24,6 +24,8 @@ model User {
   flashes      Flash[]            @relation("flashes")
   likedFlashes UserLikedFlashes[]
 
+  tasks Task[] @relation("tasks")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -102,6 +104,9 @@ model Task {
   id      String  @id @default(cuid())
   content String?
   isDone  Boolean @default(false)
+
+  authorId String
+  author   User   @relation("tasks", fields: [authorId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

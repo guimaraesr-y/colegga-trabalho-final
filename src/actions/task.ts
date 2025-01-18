@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import TaskService, { CreateTaskInput } from "@/domain/tasks/service";
+import TaskService, { CreateTaskInput, TaskPageableOptions } from "@/domain/tasks/service";
 
 const taskService = new TaskService();
 
@@ -24,6 +24,6 @@ export const getTask = async (taskId: string) => {
   return await taskService.getTask(taskId);
 };
 
-export const getTasks = async () => {
-  return await taskService.getTasks();
+export const getTasks = async (options: TaskPageableOptions) => {
+  return await taskService.getTasks(options);
 };

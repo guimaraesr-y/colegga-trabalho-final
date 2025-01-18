@@ -5,7 +5,7 @@ import { PageableBaseService } from "@/misc/baseService";
 
 export type Task = PrismaTask
 export type CreateTaskInput = Prisma.TaskCreateInput
-export type FlashPageableOptions = Prisma.TaskFindManyArgs
+export type TaskPageableOptions = Prisma.TaskFindManyArgs
 
 export default class TaskService extends PageableBaseService {
 
@@ -32,7 +32,7 @@ export default class TaskService extends PageableBaseService {
     return task;
   }
 
-  async getFlashes(options: FlashPageableOptions) {
+  async getTasks(options: TaskPageableOptions) {
     const pageableService = this.getPageableService<Task>();
     return await pageableService.getPageable(options);
   }

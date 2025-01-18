@@ -1,12 +1,15 @@
 import { Prisma, PrismaClient, Task as PrismaTask } from "@prisma/client";
 import NotificationService from "../notification/service";
-import BaseService from "@/misc/baseService";
 import { TaskNotFound } from "./errors/taskNotFound";
+import { PageableBaseService } from "@/misc/baseService";
 
 export type Task = PrismaTask
 export type CreateTaskInput = Prisma.TaskCreateInput
+export type FlashPageableOptions = Prisma.TaskFindManyArgs
 
-export default class TaskService extends BaseService {
+export default class TaskService extends PageableBaseService {
+
+  model = this._prisma.task;
 
   private notificationService;
 
@@ -29,8 +32,9 @@ export default class TaskService extends BaseService {
     return task;
   }
 
-  async getTasks() {
-    return this._prisma.task.findMany();
+  async getFlashes(options: FlashPageableOptions) {
+    const pageableService = this.getPageableService<Task>();
+    return await pageableService.getPageable(options);
   }
 
   async createTask(data: CreateTaskInput) {

@@ -25,7 +25,6 @@ export default function FlashCardDetails({
   onClose,
   onLike,
   isLiked,
-  onComment,
 }: FlashCardDetailsProps) {
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(data.likes);
@@ -189,7 +188,7 @@ export default function FlashCardDetails({
             setLikes(lastContentSeen.likes); // Restaura os likes
           }
         }}
-        onLike={(liked) => handleCommentLike(focusedComment.id)}
+        onLike={() => handleCommentLike(focusedComment.id)}
         isLiked={focusedComment?.isLiked}
         onComment={(comment, parentId) =>
           handleAddComment(comment, parentId || focusedComment.id)

@@ -24,6 +24,8 @@ model User {
   flashes      Flash[]            @relation("flashes")
   likedFlashes UserLikedFlashes[]
 
+  tasks Task[] @relation("tasks")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -34,9 +36,9 @@ model Notification {
   title    String
   message  String
   sendDate DateTime?
-  
-  isActive Boolean   @default(true)
-  isSent   Boolean   @default(false)
+
+  isActive Boolean @default(true)
+  isSent   Boolean @default(false)
 
   targets UserNotification[]
 
@@ -96,4 +98,16 @@ model UserLikedFlashes {
   createdAt DateTime @default(now())
 
   @@id([flashId, userId])
+}
+
+model Task {
+  id      String  @id @default(cuid())
+  content String?
+  isDone  Boolean @default(false)
+
+  authorId String
+  author   User   @relation("tasks", fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

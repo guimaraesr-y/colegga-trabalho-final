@@ -1,5 +1,6 @@
 import * as actions from "@/actions/task";
-import { CreateTaskInput, TaskPageableOptions } from "@/domain/tasks/service";
+import { CreateTaskInput, Task, TaskPageableOptions } from "@/domain/tasks/service";
+import { Pageable } from "@/misc/pageable";
 
 export const useTasks = () => {
   
@@ -26,11 +27,11 @@ export const useTasks = () => {
   const getTasks = async (options: TaskPageableOptions) => {
     const data = await actions.getTasks(options);
 
-    if ('error' in data && data.error) {
+    if (data && 'error' in data && data.error) {
       throw data.message;
     }
 
-    return data;
+    return data as Pageable<Task>;
   }
 
   const toggleFinishTask = async (taskId: string, action: boolean) => {

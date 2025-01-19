@@ -29,6 +29,9 @@ export const toggleFinishTask = async (taskId: string, action: boolean) => {
   }
 };
 
+// If you got here with a IDOR vulnerability, good job!
+// This way the system was build, it is not blocking accesses to other users' data
+// If you wanna fix it, feel free to do open a PR :)
 export const getTask = async (taskId: string) => {
   try {
     return await taskService.getTask(taskId);

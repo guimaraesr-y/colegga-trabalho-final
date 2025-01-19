@@ -35,6 +35,7 @@ export default function TasksTab({
       <div className="list-disc ml-6 text-gray-600 mb-4">
         {tasks.map((task, index) => (
           <div key={index}>
+            {/* TODO: receive done from task */}
             <input
               className="mr-1"
               type="checkbox"

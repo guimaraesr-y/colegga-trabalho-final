@@ -13,6 +13,9 @@ import Overview from "@/components/dashboard/overview";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Task } from "@/domain/tasks/service";
+import { useTasks } from "@/hooks/tasks";
+import { toast } from "react-toastify";
 
 export default function DashboardPage(): JSX.Element {
   const router = useRouter();
@@ -23,8 +26,10 @@ export default function DashboardPage(): JSX.Element {
     }
   });
 
+  const { createTask } = useTasks();
+
   const [selectedTab, setSelectedTab] = useState<string>("overview")
-  const [tasks, setTasks] = useState<string[]>(["Estudar capítulo 5", "Revisar notas de aula", "Participar do fórum de discussão"]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<string>("");
 
   const tabs: Tab[] = [
@@ -33,11 +38,28 @@ export default function DashboardPage(): JSX.Element {
     { id: "calendar", label: "Calendário", icon: <BsCalendar className="text-2xl" /> },
   ];
 
-  const handleAddTask = () => {
-    if (newTask.trim() !== "") {
-      setTasks([...tasks, newTask.trim()]);
-      setNewTask("");
-    }
+  const handleCreateTask = () => 
+    createTask({ content: newTask })
+      .then((task) => {
+        setTasks([
+          ...tasks,
+          task as Task,
+        ]);
+        setNewTask("");
+      })
+      .catch((error) => {
+        console.error("Error creating task:", error);
+        toast.error("Ocorreu um erro ao criar sua tarefa. Tente novamente mais tarde.");
+      })
+
+  const handleAddTask = async () => {
+    toast.promise(
+      () => handleCreateTask(),
+      {
+        pending: 'Criando sua meta...',
+        success: 'Sua tarefa foi criada com sucesso!',
+      }
+    )
   };
 
   const renderContent = () => {

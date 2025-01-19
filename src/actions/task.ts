@@ -1,29 +1,46 @@
+'use server';
+
 import { auth } from "@/auth";
 import TaskService, { CreateTaskInput, TaskPageableOptions } from "@/domain/tasks/service";
 
 const taskService = new TaskService();
 
-export const createTask = async (taskData: CreateTaskInput) => {
+export const createTask = async (taskData: Omit<CreateTaskInput, 'author'>) => {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (!session?.user?.email) throw new Error("Unauthorized");
 
-  taskData.author = { 
-    connect: { 
-      id: session.user.id 
-    } 
-  };
-  
-  return await taskService.createTask(taskData);
+  const createInput = { 
+    ...taskData, 
+    author: { connect: { email: session.user.email } } 
+  } as CreateTaskInput;
+
+  try {
+    return await taskService.createTask(createInput);
+  } catch (error) {
+    return Object.assign({ error: true }, error) as { error: true, message: string };
+  }
 };
 
 export const toggleFinishTask = async (taskId: string, action: boolean) => {
-  await taskService.toggleFinishTask(taskId, action);
+  try {
+    return await taskService.toggleFinishTask(taskId, action);
+  } catch (error) {
+    return Object.assign({ error: true }, error) as { error: true, message: string };
+  }
 };
 
 export const getTask = async (taskId: string) => {
-  return await taskService.getTask(taskId);
+  try {
+    return await taskService.getTask(taskId);
+  } catch (error) {
+    return Object.assign({ error: true }, error) as { error: true, message: string };
+  }
 };
 
 export const getTasks = async (options: TaskPageableOptions) => {
-  return await taskService.getTasks(options);
+  try {
+    return await taskService.getTasks(options);
+  } catch (error) {
+    return Object.assign({ error: true }, error) as { error: true, message: string };
+  }
 };

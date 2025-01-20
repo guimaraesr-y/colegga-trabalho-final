@@ -28,7 +28,6 @@ export default function Overview(): JSX.Element {
           },
         },
       });
-      console.log(allTasks)
 
       const finishedTasks = await countTasks({
         where: {
@@ -38,7 +37,6 @@ export default function Overview(): JSX.Element {
           isDone: true,
         },
       });
-    console.log(`finished`,finishedTasks)
 
       setTotalTasks(allTasks);
       setCompletedTasks(finishedTasks);

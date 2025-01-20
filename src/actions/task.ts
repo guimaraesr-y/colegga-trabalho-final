@@ -33,6 +33,9 @@ export const toggleFinishTask = async (taskId: string, action: boolean) => {
 // This way the system was build, it is not blocking accesses to other users' data
 // If you wanna fix it, feel free to do open a PR :)
 export const getTask = async (taskId: string) => {
+  const session = await auth();
+  if (!session?.user?.email) throw new Error("Unauthorized");
+
   try {
     return await taskService.getTask(taskId);
   } catch (error) {
@@ -41,6 +44,11 @@ export const getTask = async (taskId: string) => {
 };
 
 export const getTasks = async (options: TaskPageableOptions) => {
+  const session = await auth();
+  if (!session?.user?.email) throw new Error("Unauthorized");
+
+  (options.where ??= {}).authorId = session.user.id;
+
   try {
     return await taskService.getTasks(options);
   } catch (error) {

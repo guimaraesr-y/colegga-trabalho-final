@@ -6,6 +6,7 @@ import { PageableBaseService } from "@/misc/baseService";
 export type Task = PrismaTask
 export type CreateTaskInput = Prisma.TaskCreateInput
 export type TaskPageableOptions = Prisma.TaskFindManyArgs
+export type TaskCountOptions = Prisma.TaskCountArgs
 
 export default class TaskService extends PageableBaseService {
 
@@ -35,6 +36,11 @@ export default class TaskService extends PageableBaseService {
   async getTasks(options: TaskPageableOptions) {
     const pageableService = this.getPageableService<Task>();
     return await pageableService.getPageable(options);
+  }
+
+  async countTasks(options: TaskCountOptions) {
+    const tasksCount = this._prisma.task.count(options)
+    return tasksCount
   }
 
   async createTask(data: CreateTaskInput) {

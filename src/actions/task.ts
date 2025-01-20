@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import TaskService, { CreateTaskInput, TaskPageableOptions } from "@/domain/tasks/service";
+import { Prisma } from "@prisma/client";
 
 const taskService = new TaskService();
 
@@ -55,3 +56,11 @@ export const getTasks = async (options: TaskPageableOptions) => {
     return Object.assign({ error: true }, error) as { error: true, message: string };
   }
 };
+
+export const countTasks = async (options: Prisma.TaskCountArgs) => {
+  try {
+    return await taskService.countTasks(options)
+  } catch (error) {
+    return Object.assign({ error: true }, error) as { error: true, message: string };
+  }
+}

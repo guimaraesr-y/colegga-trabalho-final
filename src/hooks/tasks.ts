@@ -1,6 +1,7 @@
 import * as actions from "@/actions/task";
-import { CreateTaskInput, Task, TaskPageableOptions } from "@/domain/tasks/service";
+import { CreateTaskInput, Task, TaskPageableOptions, TaskCountOptions } from "@/domain/tasks/service";
 import { Pageable } from "@/misc/pageable";
+import { Prisma } from "@prisma/client";
 
 export const useTasks = () => {
   
@@ -38,12 +39,22 @@ export const useTasks = () => {
     const data = await actions.toggleFinishTask(taskId, action);
     return data;
   }
+
+  const countTasks = async (options: TaskCountOptions) => {
+    const data = await actions.countTasks(options)
+    if (typeof data != 'number' && 'error' in data && data.error) {
+      throw data.message;
+    }
+    
+    return data as number
+  }
   
   return {
     createTask,
     getTask,
     getTasks,
     toggleFinishTask,
+    countTasks
   }
 
 };

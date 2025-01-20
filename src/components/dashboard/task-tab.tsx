@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useTasks } from "@/hooks/tasks";
 import { Task } from "@/domain/tasks/service";
@@ -18,9 +18,12 @@ export default function TasksTab({
 }: TasksTabProps): JSX.Element {
   const { toggleFinishTask } = useTasks();
 
-  const [checkedStates, setCheckedStates] = useState<boolean[]>(
-    new Array(tasks.length).fill(false)
-  );
+  const [checkedStates, setCheckedStates] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    setCheckedStates(tasks.map(task => task.isDone))
+  },[tasks])
+
   const handleCheck = (index: number) => {
     setCheckedStates((prevStates) =>
       prevStates.map((state, i) => (i === index ? !state : state))
@@ -35,7 +38,6 @@ export default function TasksTab({
       <div className="list-disc ml-6 text-gray-600 mb-4">
         {tasks.map((task, index) => (
           <div key={index}>
-            {/* TODO: receive done from task */}
             <input
               className="mr-1"
               type="checkbox"

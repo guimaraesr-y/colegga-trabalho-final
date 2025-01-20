@@ -43,6 +43,7 @@ export default function Overview(): JSX.Element {
     }
 
     fetchTasks();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.user?.id]);
 
   return (

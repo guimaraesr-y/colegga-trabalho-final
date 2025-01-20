@@ -1,4 +1,3 @@
-import { getTasks } from "@/actions/task";
 import { useTasks } from "@/hooks/tasks";
 import { useSession } from "next-auth/react";
 import React from "react";

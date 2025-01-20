@@ -1,7 +1,6 @@
 import * as actions from "@/actions/task";
 import { CreateTaskInput, Task, TaskPageableOptions, TaskCountOptions } from "@/domain/tasks/service";
 import { Pageable } from "@/misc/pageable";
-import { Prisma } from "@prisma/client";
 
 export const useTasks = () => {
   

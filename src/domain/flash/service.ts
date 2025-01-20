@@ -5,6 +5,8 @@ import NotificationService from "../notification/service";
 
 export type Flash = PrismaFlash;
 export type FlashPageableOptions = PageableOptions<Prisma.FlashWhereInput, Prisma.FlashOrderByWithRelationInput>;
+export type CreateFlashInput = Prisma.FlashCreateInput;
+export type UpdateFlashInput = Prisma.FlashUpdateInput;
 
 export default class FlashService extends PageableBaseService {
 

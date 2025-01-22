@@ -25,13 +25,12 @@ export default function DashboardPage(): JSX.Element {
   const [newTask, setNewTask] = useState<string>("");
   const [checkedStates, setCheckedStates] = useState<boolean[]>([]);
 
-  const { status } = useSession();
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/");
-    }
-  }, [status, router]);
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+        router.push("/");
+    },
+  });
 
   const { getTasks, createTask, toggleFinishTask, deleteTask } = useTasks();
 
@@ -46,16 +45,14 @@ export default function DashboardPage(): JSX.Element {
       try {
         const fetchedTasks = await getTasks({});
         setTasks(fetchedTasks.data);
-        setCheckedStates(fetchedTasks.data.map((task) => task.isDone));
+        setCheckedStates(fetchedTasks.data.map(task => task.isDone));
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
     };
-
-    if (status === "authenticated") {
-      fetchTasks();
-    }
-  }, [status, getTasks]);
+    fetchTasks();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreateTask = async () => {
     if (newTask === "") {

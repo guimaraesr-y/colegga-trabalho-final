@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BsCalendar, BsGraphUp, BsListTask } from "react-icons/bs";
 
+import Loading from "@/components/ui/loading";
 import Header from "@/components/dashboard/header";
 import TabNavigation, { Tab } from "@/components/dashboard/tab-navigation";
 import CalendarTab from "@/components/dashboard/calendar-tab";
@@ -24,7 +25,7 @@ export default function DashboardPage(): JSX.Element {
   const [newTask, setNewTask] = useState<string>("");
   const [checkedStates, setCheckedStates] = useState<boolean[]>([]);
 
-  const { } = useSession({
+  const { status } = useSession({
     required: true,
     onUnauthenticated() {
       router.push("/");
@@ -132,6 +133,8 @@ export default function DashboardPage(): JSX.Element {
   };
 
   return (
+    <>
+    {status === 'loading' ? <Loading /> :
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Header />
@@ -142,10 +145,11 @@ export default function DashboardPage(): JSX.Element {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="bg-white rounded-xl shadow-lg"
-        >
+          >
           {renderContent()}
         </motion.div>
       </div>
-    </div>
+    </div>}
+  </>
   );
 }

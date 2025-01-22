@@ -41,17 +41,19 @@ export default function DashboardPage(): JSX.Element {
   ];
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const fetchedTasks = await getTasks({});
-        setTasks(fetchedTasks.data);
-        setCheckedStates(fetchedTasks.data.map(task => task.isDone));
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
-    fetchTasks();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (status === 'authenticated') {
+      const fetchTasks = async () => {
+        try {
+          const fetchedTasks = await getTasks({});
+          setTasks(fetchedTasks.data);
+          setCheckedStates(fetchedTasks.data.map(task => task.isDone));
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        }
+      };
+      fetchTasks();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
   }, []);
 
   const handleCreateTask = async () => {

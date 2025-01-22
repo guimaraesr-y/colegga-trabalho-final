@@ -15,16 +15,18 @@ export const useAuth = () => {
 
   const register = async (credentials: RegisterCredentials) => {
     const data = await actions.register(credentials);
-    const loginCredentials = {
-      email: credentials.email,
-      password: credentials.password,
-    }
+    // fix this for login after register
+
+    // const loginCredentials = {
+    //   email: credentials.email,
+    //   password: credentials.password,
+    // }
 
     if ('error' in data && data.error) {
       throw data.message;
     }
 
-    login(loginCredentials);
+    // login(loginCredentials);
   }
 
   const logout = async () => {

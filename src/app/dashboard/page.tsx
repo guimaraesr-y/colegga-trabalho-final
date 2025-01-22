@@ -28,9 +28,12 @@ export default function DashboardPage(): JSX.Element {
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/");
-    }
+      if (status !== "loading") {
+        router.push("/");
+      }
+    },
   });
+
 
   const { getTasks, createTask, toggleFinishTask, deleteTask } = useTasks();
 
@@ -134,22 +137,22 @@ export default function DashboardPage(): JSX.Element {
 
   return (
     <>
-    {status === 'loading' ? <Loading /> :
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Header />
-        <TabNavigation tabs={tabs} selectedTab={selectedTab} onSelect={setSelectedTab} />
-        <motion.div
-          key={selectedTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white rounded-xl shadow-lg"
-          >
-          {renderContent()}
-        </motion.div>
-      </div>
-    </div>}
-  </>
+      {status === 'loading' ? <Loading /> :
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Header />
+          <TabNavigation tabs={tabs} selectedTab={selectedTab} onSelect={setSelectedTab} />
+          <motion.div
+            key={selectedTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="bg-white rounded-xl shadow-lg"
+            >
+            {renderContent()}
+          </motion.div>
+        </div>
+      </div>}
+    </>
   );
 }

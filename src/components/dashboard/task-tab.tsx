@@ -46,7 +46,6 @@ export default function TasksTab({
                 {task.content}
               </label>
             </div>
-            {/* Botão de exclusão com ícone de lixo */}
             <Button
               onClick={() => onDeleteTask(task.id)}
               className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-med"

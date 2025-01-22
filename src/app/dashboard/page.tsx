@@ -61,7 +61,6 @@ export default function DashboardPage(): JSX.Element {
       const task = await createTask({ content: newTask });
 
   
-      // Verifica se o objeto retornado é uma tarefa válida
       if ("isDone" in task && "id" in task) {
         setTasks((prevTasks) => [...prevTasks, task as Task]);
         setCheckedStates((prevStates) => [...prevStates, task.isDone]);

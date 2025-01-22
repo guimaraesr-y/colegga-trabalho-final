@@ -17,7 +17,6 @@ export default function Overview(): JSX.Element {
 
   const { countTasks } = useTasks();
   const { data } = useSession()
-  
    React.useEffect(() => {
     async function fetchTasks() {
       const allTasks = await countTasks({
@@ -43,7 +42,9 @@ export default function Overview(): JSX.Element {
 
     fetchTasks();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.user?.id]);
+  }, [data?.user?.id, completedTasks, totalTasks]);
+
+
 
   return (
     <div className="p-6">

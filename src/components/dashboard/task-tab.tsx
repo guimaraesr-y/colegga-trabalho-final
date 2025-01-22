@@ -47,7 +47,7 @@ export default function TasksTab({
             </div>
             <Button
               onClick={() => onDeleteTask(task.id)}
-              className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-med"
+              className="bg-white text-red-600 hover:bg-red-600 hover:text-white p-1 h-5 rounded-sm flex items-center justify-center transition-colors duration-300"
             >
               <BsTrash />
             </Button>
@@ -59,6 +59,7 @@ export default function TasksTab({
           type="text"
           placeholder="Nova tarefa"
           value={newTask}
+          maxLength={124}
           onChange={(e) => setNewTask(e.target.value)}
           className="border p-2 rounded w-full"
         />

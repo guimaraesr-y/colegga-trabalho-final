@@ -54,7 +54,7 @@ export default function DashboardPage(): JSX.Element {
       fetchTasks();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }
-  }, []);
+  }, [status, getTasks]);
 
   const handleCreateTask = async () => {
     if (newTask === "") {

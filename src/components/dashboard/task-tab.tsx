@@ -1,6 +1,5 @@
 import { Button } from "../ui/button";
 import { Task } from "@/domain/tasks/service";
-import { useTasks } from "@/hooks/tasks";
 import { BsTrash } from "react-icons/bs";
 
 interface TasksTabProps {

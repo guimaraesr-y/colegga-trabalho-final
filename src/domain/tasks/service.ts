@@ -66,7 +66,7 @@ export default class TaskService extends PageableBaseService {
       });
   
     } catch (error) {
-      throw new Error("Não foi possível deletar a tarefa.");
+      throw new Error(`Não foi possível deletar a tarefa. ${error}`) 
     }
   }
 

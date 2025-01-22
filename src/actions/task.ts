@@ -57,6 +57,11 @@ export const getTasks = async (options: TaskPageableOptions) => {
   }
 };
 
+export const deleteTask = async(taskId: string) => {
+  
+  await taskService.deleteTask(taskId);
+}
+
 export const countTasks = async (options: Prisma.TaskCountArgs) => {
   try {
     return await taskService.countTasks(options)

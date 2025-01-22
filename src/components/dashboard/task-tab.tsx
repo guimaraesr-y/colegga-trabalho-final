@@ -1,56 +1,58 @@
-import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { useTasks } from "@/hooks/tasks";
 import { Task } from "@/domain/tasks/service";
+import { useTasks } from "@/hooks/tasks";
+import { BsTrash } from "react-icons/bs";
 
 interface TasksTabProps {
   tasks: Task[];
+  checkedStates: boolean[];
+  handleCheck: (index: number) => void;
   newTask: string;
   setNewTask: (value: string) => void;
   onAddTask: () => void;
+  onDeleteTask: (value: string) => void;
 }
 
-export default function TasksTab({ 
-  tasks, 
-  newTask, 
-  setNewTask, 
-  onAddTask 
+export default function TasksTab({
+  tasks,
+  checkedStates,
+  handleCheck,
+  newTask,
+  setNewTask,
+  onAddTask,
+  onDeleteTask
 }: TasksTabProps): JSX.Element {
-  const { toggleFinishTask } = useTasks();
-
-  const [checkedStates, setCheckedStates] = useState<boolean[]>([]);
-
-  useEffect(() => {
-    setCheckedStates(tasks.map(task => task.isDone))
-  },[tasks])
-
-  const handleCheck = (index: number) => {
-    setCheckedStates((prevStates) =>
-      prevStates.map((state, i) => (i === index ? !state : state))
-    );
-
-    toggleFinishTask(tasks[index].id, !checkedStates[index]);
-  };
-
+  
+  
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Tarefas Recentes</h2>
       <div className="list-disc ml-6 text-gray-600 mb-4">
         {tasks.map((task, index) => (
-          <div key={index}>
-            <input
-              className="mr-1"
-              type="checkbox"
-              checked={checkedStates[index]}
-              onChange={() => handleCheck(index)}
-            />
-            <label
-              className={`cursor-pointer ${checkedStates[index] ? "line-through text-gray-400" : ""
+          <div key={task.id} className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                className="mr-1"
+                type="checkbox"
+                checked={checkedStates[index]}
+                onChange={() => handleCheck(index)}
+              />
+              <label
+                className={`cursor-pointer ${
+                  checkedStates[index] ? "line-through text-gray-400" : ""
                 }`}
-              onClick={() => handleCheck(index)}
+                onClick={() => handleCheck(index)}
+              >
+                {task.content}
+              </label>
+            </div>
+            {/* Botão de exclusão com ícone de lixo */}
+            <Button
+              onClick={() => onDeleteTask(task.id)}
+              className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-med"
             >
-              {task.content}
-            </label>
+              <BsTrash />
+            </Button>
           </div>
         ))}
       </div>

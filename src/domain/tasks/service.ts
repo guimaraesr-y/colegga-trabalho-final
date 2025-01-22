@@ -50,6 +50,25 @@ export default class TaskService extends PageableBaseService {
 
     return task;
   }
+  
+  async deleteTask(taskId: string): Promise<void> {
+    try {
+      const task = await this.getTask(taskId);
+  
+      if (!task) {
+        throw new TaskNotFound();
+      }
+  
+      await this._prisma.task.delete({
+        where: {
+          id: taskId,
+        },
+      });
+  
+    } catch (error) {
+      throw new Error("Não foi possível deletar a tarefa.");
+    }
+  }
 
   async toggleFinishTask(taskId: string, action: boolean) {
     const task = await this.getTask(taskId);

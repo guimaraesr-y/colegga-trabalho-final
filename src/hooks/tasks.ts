@@ -39,6 +39,10 @@ export const useTasks = () => {
     return data;
   }
 
+  const deleteTask = async(taskId: string) => {
+    await actions.deleteTask(taskId);
+  }
+
   const countTasks = async (options: TaskCountOptions) => {
     const data = await actions.countTasks(options)
     if (typeof data != 'number' && 'error' in data && data.error) {
@@ -53,6 +57,7 @@ export const useTasks = () => {
     getTask,
     getTasks,
     toggleFinishTask,
+    deleteTask,
     countTasks
   }
 

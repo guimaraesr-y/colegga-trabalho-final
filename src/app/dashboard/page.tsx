@@ -28,10 +28,10 @@ export default function DashboardPage(): JSX.Element {
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
-        router.push("/");
+      router.push("/");
     },
   });
-
+  
   const { getTasks, createTask, toggleFinishTask, deleteTask } = useTasks();
 
   const tabs: Tab[] = [
@@ -52,9 +52,8 @@ export default function DashboardPage(): JSX.Element {
         }
       };
       fetchTasks();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }
-  });
+    } 
+  }, [status]);
 
   const handleCreateTask = async () => {
     if (newTask === "") {
@@ -151,7 +150,8 @@ export default function DashboardPage(): JSX.Element {
             {renderContent()}
           </motion.div>
         </div>
-      </div>}
+      </div>
+       }
     </>
   );
 }

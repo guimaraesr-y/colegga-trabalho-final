@@ -19,15 +19,13 @@ export const login = async (credentials: LoginCredentials) => {
 
 export const register = async (credentials: RegisterCredentials) => {
     try {
-        // fix this for login after register
-
-
-        // const loginCredentials = {
-        //     email: credentials.email,
-        //     password: credentials.password
-        // }
+        const loginCredentials = {
+            email: credentials.email,
+            password: credentials.password
+        }
         const data = await authService.register(credentials);
-        // await authService.login(loginCredentials)
+        
+        await login(loginCredentials)
         return data
     } catch (error) {
         return Object.assign({ error: true }, error) as { error: true, message: string };

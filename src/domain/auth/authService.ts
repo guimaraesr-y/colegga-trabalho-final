@@ -52,7 +52,6 @@ export default class AuthService extends BaseService {
     if (!BCrypt.compare(password, user.password!)) {
       throw new InvalidCredentialsError();
     }
-
     return user;
   }
 

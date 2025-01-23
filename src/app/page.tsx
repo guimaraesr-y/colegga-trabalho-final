@@ -27,7 +27,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if(status === "authenticated") {
-      console.log(status)
       router.push("/dashboard");
     }
   }, [router, status])

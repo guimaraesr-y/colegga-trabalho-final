@@ -22,21 +22,18 @@ export default class EmailService extends BaseService {
     });
   }
 
-  //not working, if u want to, fix it
-
   async sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
-    console.log('send email', to, subject, html)
-    // try {
-    //   await this.transporter.sendMail({
-    //     from: process.env.SMTP_FROM_EMAIL,
-    //     to,
-    //     subject,
-    //     html,
-    //   });
-    //   console.log(`Email sent to ${to}`);
-    // } catch (error) {
-    //   console.error(`Failed to send email to ${to}`, error);
-    // }
+    try {
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM_EMAIL,
+        to,
+        subject,
+        html,
+      });
+      console.log(`Email sent to ${to}`);
+    } catch (error) {
+      console.error(`Failed to send email to ${to}`, error);
+    }
   }
 
   private async loadTemplate(templateName: string): Promise<string> {
@@ -62,33 +59,32 @@ export default class EmailService extends BaseService {
   
 
   async sendNotification(notification: Notification, variables: Record<string, string> = {}) {
-    console.log('send notification', variables)
-    // const userNotifications = await this._prisma.userNotification.findMany({
-    //   where: { notificationId: notification.id },
-    //   include: { user: true },
-    // });
+    const userNotifications = await this._prisma.userNotification.findMany({
+      where: { notificationId: notification.id },
+      include: { user: true },
+    });
 
-    // const template = notification.template || "default";
-    // const templateContent =
-    //   notification.customEmailMessage ?? (await this.loadTemplate(template));
+    const template = notification.template || "default";
+    const templateContent =
+      notification.customEmailMessage ?? (await this.loadTemplate(template));
 
-    // for (const userNotification of userNotifications) {
-    //   const { user } = userNotification;
+    for (const userNotification of userNotifications) {
+      const { user } = userNotification;
 
-    //   const personalizedContent = this.personalizeTemplate(templateContent, {
-    //     title: notification.title,
-    //     message: notification.message,
-    //     userName: user.name!,
-    //     emailMessage: notification.customEmailMessage || "",
-    //     ...variables,
-    //   });
+      const personalizedContent = this.personalizeTemplate(templateContent, {
+        title: notification.title,
+        message: notification.message,
+        userName: user.name!,
+        emailMessage: notification.customEmailMessage || "",
+        ...variables,
+      });
 
-    //   await this.sendEmail({
-    //     to: user.email!,
-    //     subject: notification.title,
-    //     html: personalizedContent,
-    //   });
-    // }
+      await this.sendEmail({
+        to: user.email!,
+        subject: notification.title,
+        html: personalizedContent,
+      });
+    }
 
     await this._prisma.notification.update({
       where: { id: notification.id },

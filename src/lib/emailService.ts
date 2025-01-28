@@ -61,7 +61,7 @@ export default class EmailService extends BaseService {
   
 
   async sendNotification(notification: Notification, variables: Record<string, string> = {}) {
-    console.log('send notification')
+    console.log('send notification', variables)
     // const userNotifications = await this._prisma.userNotification.findMany({
     //   where: { notificationId: notification.id },
     //   include: { user: true },

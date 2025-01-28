@@ -24,19 +24,20 @@ export default class EmailService extends BaseService {
 
   //not working, if u want to, fix it
 
-  // async sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
-  //   try {
-  //     await this.transporter.sendMail({
-  //       from: process.env.SMTP_FROM_EMAIL,
-  //       to,
-  //       subject,
-  //       html,
-  //     });
-  //     console.log(`Email sent to ${to}`);
-  //   } catch (error) {
-  //     console.error(`Failed to send email to ${to}`, error);
-  //   }
-  // }
+  async sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+    console.log('send email', to, subject, html)
+    // try {
+    //   await this.transporter.sendMail({
+    //     from: process.env.SMTP_FROM_EMAIL,
+    //     to,
+    //     subject,
+    //     html,
+    //   });
+    //   console.log(`Email sent to ${to}`);
+    // } catch (error) {
+    //   console.error(`Failed to send email to ${to}`, error);
+    // }
+  }
 
   private async loadTemplate(templateName: string): Promise<string> {
     const templatePath = path.join(process.cwd(), "src", "templates", `${templateName}.html`);

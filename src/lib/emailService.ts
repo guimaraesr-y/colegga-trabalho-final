@@ -37,7 +37,7 @@ export default class EmailService extends BaseService {
   }
 
   private async loadTemplate(templateName: string): Promise<string> {
-    const templatePath = path.join(process.cwd(), "src", "templates", `${templateName}.html`);
+    const templatePath = path.resolve("src/templates", `${templateName}.html`);
 
     try {
       return await fs.readFile(templatePath, "utf8");
